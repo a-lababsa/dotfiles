@@ -11,20 +11,27 @@ install:
  	# Create necessary directories
 	mkdir -p ~/.config
 
+	# Remove existing files/symlinks if they exist
+	rm -f ~/.zshrc
+	rm -f ~/.zsh_aliases
+	rm -f ~/.gitconfig
+	rm -f ~/.gitignore
+	rm -f ~/.vimrc
+	rm -f ~/.config/starship.toml
+
  	# ZSH
-	ln -snvf ${PWD}/zsh/.zshrc ~/.zshrc
-	ln -snvf ${PWD}/zsh/.zsh_aliases ~/.zsh_aliases
+	cp -f ${PWD}/config/zsh/.zshrc ~/.zshrc
+	cp -f ${PWD}/config/zsh/.zsh_aliases ~/.zsh_aliases
 	
  	# Git
-	ln -snvf ${PWD}/git/.gitconfig ~/.gitconfig
-	ln -snvf ${PWD}/git/.gitignore ~/.gitignore
+	cp -f ${PWD}/config/git/.gitconfig ~/.gitconfig
+	cp -f ${PWD}/config/git/.gitignore ~/.gitignore
 	
  	# Vim
-	ln -snvf ${PWD}/vim/.vimrc ~/.vimrc
+	# cp -f ${PWD}/config/vim/.vimrc ~/.vimrc
 	
  	# Starship
-	mkdir -p ~/.config
-	ln -snvf ${PWD}/starship/starship.toml ~/.config/starship.toml
+	cp -f ${PWD}/config/starship/starship.toml ~/.config/starship.toml
 
 wsl-setup:
 	sudo apt update && sudo apt upgrade -y
