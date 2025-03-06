@@ -12,12 +12,12 @@ install:
 	mkdir -p ~/.config
 
 	# Remove existing files/symlinks if they exist
-	rm -f ~/.zshrc
-	rm -f ~/.zsh_aliases
-	rm -f ~/.gitconfig
-	rm -f ~/.gitignore
-	rm -f ~/.vimrc
-	rm -f ~/.config/starship.toml
+	[ -f ~/.zshrc ] && rm -f ~/.zshrc || true
+	[ -f ~/.zsh_aliases ] && rm -f ~/.zsh_aliases || true
+	[ -f ~/.gitconfig ] && rm -f ~/.gitconfig || true
+	[ -f ~/.gitignore ] && rm -f ~/.gitignore || true
+	[ -f ~/.vimrc ] && rm -f ~/.vimrc || true
+	[ -f ~/.config/starship.toml ] && rm -f ~/.config/starship.toml || true
 
  	# ZSH
 	cp -f ${PWD}/config/zsh/.zshrc ~/.zshrc
@@ -33,7 +33,16 @@ install:
  	# Starship
 	cp -f ${PWD}/config/starship/starship.toml ~/.config/starship.toml
 
+	# NVM configuration
+	@if [ -s "$$HOME/.nvm/nvm.sh" ]; then \
+		. "$$HOME/.nvm/nvm.sh" && nvm alias default 'lts/*' && \
+		echo "NVM configured with latest LTS version as default"; \
+	else \
+		echo "NVM is not yet installed, run 'make nvm-setup'"; \
+	fi
+
 wsl-setup:
+	@echo "Updating and installing essential packages..."
 	sudo apt update && sudo apt upgrade -y
 	
 	sudo apt install -y \
@@ -49,6 +58,10 @@ wsl-setup:
 
 
 	curl -sS https://starship.rs/install.sh | sh
+
+nvm-setup:
+	@echo "NVM installation.."
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 
 ollama-setup: check-wsl
 	@if command -v ollama >/dev/null 2>&1; then \
@@ -109,4 +122,4 @@ help:
 	@echo "  ollama-setup - Install Ollama"
 	@echo "  help         - Show this help message"
 
-.PHONY: check-wsl check-cuda install wsl-setup cuda-setup ollama-setup help
+.PHONY: check-wsl check-cuda install wsl-setup cuda-setup ollama-setup nvm-setup help
