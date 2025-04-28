@@ -8,5 +8,8 @@ setopt appendhistory
 autoload -Uz compinit
 compinit
 
+export PATH="$HOME/.local/bin:$PATH"
+
 # Initialisation de Starship
 eval "$(starship init zsh)"
+eval "$(task --completion zsh)"
