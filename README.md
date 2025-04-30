@@ -40,8 +40,8 @@ task cuda-setup
 
 ```bash
 # Clone this repository
-git clone https://github.com/yourusername/wsl2-dev-setup.git
-cd wsl2-dev-setup
+git clone https://github.com/a-lababsa/dotfiles.git
+cd dotfiles
 
 # Make the script executable
 chmod +x ./scripts/config-install.sh
