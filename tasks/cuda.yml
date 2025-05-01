@@ -1,0 +1,15 @@
+version: "3"
+
+tasks:
+  cuda-setup:
+    desc: Installer CUDA
+    cmds:
+      - task: utils:confirm
+        vars: { TASK: "CUDA (pour calculs GPU)" }
+      - chmod +x ./scripts/cuda-install.sh
+      - ./scripts/cuda-install.sh 12.8
+
+  cuda-verify:
+    desc: Vérifier l'installation de CUDA
+    cmds:
+      - nvcc --version || echo "CUDA n'est pas installé correctement ou nécessite un redémarrage du terminal"

@@ -1,159 +1,261 @@
 version: "3"
 
-vars:
-  CUDA_VERSION: 12.8
-  NVM_VERSION: 0.40.1
 
 includes:
   utils: ./scripts/utils.yml
+  setup: ./tasks/setup.yml
+  config: ./tasks/config.yml
+  env: ./tasks/env.yml
+  cuda: ./tasks/cuda.yml
+
+dotenv: [".env"]
 
 tasks:
-  check-wsl:
-    desc: Check if running in WSL2
+  default:
+    desc: Affiche l’aide
     silent: true
     cmds:
-      - |
-        if [ -z "$(uname -r | grep -i microsoft)" ]; then
-          echo "Error: This script must be run in WSL2"
-          exit 1
-        fi
+      - task --list-all
 
-  install:
-    desc: Install configuration files
+  doc:
+    desc: Générer la documentation des tâches disponibles
     cmds:
-      - task: utils:confirm
-        vars: { TASK: "les fichiers de configuration" }
-      - chmod +x ./scripts/config-install.sh
-      - ./scripts/config-install.sh ${PWD}
-      
-  install-task:
-    desc: Install Task (taskfile.dev) task runner
-    cmds:
-      - task: utils:confirm
-        vars: { TASK: "Task (gestionnaire de tâches)" }
-      - chmod +x ./scripts/config-install.sh
-      - ./scripts/config-install.sh ${PWD} --install-task
-      
-  task-only:
-    desc: Only install Task without configuration files
-    cmds:
-      - task: utils:confirm
-        vars: { TASK: "uniquement Task (sans fichiers de configuration)" }
-      - mkdir -p ./scripts
-      - chmod +x ./scripts/config-install.sh || cp -f ${PWD}/scripts/config-install.sh ./scripts/config-install.sh
-      - ./scripts/config-install.sh ${PWD} --install-task --only
-
-  install-essential-packages:
-    desc: Install essential packages
-    cmds:
-      - task: utils:confirm
-        vars: { TASK: "les paquets essentiels" }
-      - echo "Updating and installing essential packages..."
-      - sudo apt update && sudo apt upgrade -y
-      - sudo apt install -y zsh vim git curl wget build-essential wslu python3 python3-pip
-      - |
-        echo "Would you like to set zsh as your default shell? [y/N] "
-        read yn
-        if [ "$yn" = "y" ]; then
-          chsh -s $(which zsh)
-          echo "Shell changed to zsh. Please log out and log back in for changes to take effect."
-        fi
-
-  install-starship:
-    desc: Install Starship prompt
-    cmds:
-      - task: utils:confirm
-        vars: { TASK: "Starship prompt" }
-      - echo "Installing Starship prompt..."
-      - curl -sS https://starship.rs/install.sh | sh
-      - echo "Starship prompt installed"
-
-  wsl-setup:
-    desc: Setup basic WSL2 development environment
-    deps: [install-essential-packages, install-starship, install-task]
-
-  nvm-setup:
-    desc: Install NVM (Node Version Manager)
-    cmds:
-      - task: utils:confirm
-        vars: { TASK: "NVM (Node Version Manager) v{{.NVM_VERSION}}" }
-      - echo Installing NVM version {{.NVM_VERSION}}...
-      - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v{{.NVM_VERSION}}/install.sh | bash
-      - echo NVM installed. Please restart your terminal or run 'source ~/.zshrc' to use NVM
-      - echo You can install Node.js with = nvm install --lts
-
-  conda-setup:
-    desc: Setup Miniconda
-    cmds:
-      - task: utils:confirm
-        vars: { TASK: "Miniconda (gestionnaire d'environnements Python)" }
-      - echo "Installing Miniconda3..."
-      - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-      - bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-      - rm ~/miniconda3/miniconda.sh
-      - echo "Miniconda installed to ~/miniconda3"
-      - echo "Please run 'eval \"$(~/miniconda3/bin/conda shell.bash hook)\"' to initialize conda"
-      - echo "You may want to add this to your .bashrc or .zshrc"
-
-  ollama-setup:
-    desc: Install Ollama
-    deps: [check-wsl]
-    cmds:
-      - task: utils:confirm
-        vars: { TASK: "Ollama (moteur de modèles d'IA local)" }
-      - |
-        if command -v ollama >/dev/null 2>&1; then
-          echo "Ollama is already installed. Current version:"
-          ollama --version
-          read -p "Continue with installation? [y/N] " yn
-          if [ "$yn" != "y" ]; then
-            exit 1
-          fi
-        fi
-      - echo "Installing Ollama..."
-      - curl https://ollama.ai/install.sh | sh
-      - echo "Verifying Ollama installation..."
-      - cmd: ollama --version
-        ignore_error: true
-      - echo "Ollama installed successfully"
-
-  cuda-setup:
-    desc: Setup CUDA
-    deps: [check-wsl]
-    cmds:
-      - task: utils:confirm
-        vars: { TASK: "CUDA {{.CUDA_VERSION}} (pour calculs GPU)" }
-      - chmod +x ./scripts/cuda-install.sh
-      - ./scripts/cuda-install.sh {{.CUDA_VERSION}}
-
-  init-scripts:
-    desc: Create script directories and extract installation scripts
-    silent: true
-    cmds:
-      - mkdir -p ./scripts
-      - echo "Creating installation scripts..."
-      - cp -f ${PWD}/scripts/cuda-install.sh ./scripts/cuda-install.sh || { echo "Creating cuda-install.sh"; cat > ./scripts/cuda-install.sh << 'EOL'
+      - task --list-all > TASKS.md && echo "✅ Documentation générée dans TASKS.md"
 
   all:
-      desc: Install everything
-      cmds:
-        - task: utils:confirm
-          vars: { TASK: "l'ENVIRONNEMENT COMPLET (tous les outils et configurations)" }
-        - task: init-scripts
-          silent: true
-        - task: check-wsl
-          silent: true
-        - task: wsl-setup
-        - task: nvm-setup
-        - task: conda-setup
-        - task: cuda-setup
-        - task: ollama-setup
-        - task: install
-        - echo "Complete development environment setup finished!"
-        - echo "Please restart your terminal for all changes to take effect."
-  
-  default:
-      desc: Display help information
-      silent: true
-      cmds:
-        - task --list-all
+    desc: Installer tout l'environnement (tous les outils et configurations)
+    cmds:
+      - task: setup:install
+      - task: env:nvm-setup
+      - task: env:conda-setup
+      - task: env:cuda-setup
+      - task: config:install
+      - echo "🚀 Installation complète terminée. Veuillez redémarrer votre terminal."
+
+
+
+
+# tasks:
+#   check-wsl:
+#     desc: Vérifie si WSL2 est actif
+#     silent: true
+#     cmds:
+#       - |
+#         if ! grep -qi microsoft /proc/version; then
+#           echo "Erreur : ce script doit être exécuté sous WSL2"
+#           exit 1
+#         fi
+
+#   _install-task-script:
+#     internal: true
+#     cmds:
+#       - mkdir -p ./scripts
+#       - chmod +x ./scripts/config-install.sh || cp -f ${PWD}/scripts/config-install.sh ./scripts/config-install.sh
+
+#   install:
+#     desc: Installe les fichiers de configuration
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "les fichiers de configuration" }
+#       - chmod +x ./scripts/config-install.sh
+#       - ./scripts/config-install.sh ${PWD}
+
+#   install-task:
+#     desc: Installe Task (taskfile.dev)
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "Task (gestionnaire de tâches)" }
+#       - task: _install-task-script
+#       - ./scripts/config-install.sh ${PWD} --install-task
+
+#   task-only:
+#     desc: Installe uniquement Task sans fichiers de configuration
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "uniquement Task (sans fichiers de configuration)" }
+#       - task: _install-task-script
+#       - ./scripts/config-install.sh ${PWD} --install-task --only
+
+#   install-essential-packages:
+#     desc: Installe les paquets essentiels
+#     interactive: true
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "les paquets essentiels" }
+#       - echo "Mise à jour et installation des paquets essentiels..."
+#       - sudo apt update && sudo apt upgrade -y
+#       - sudo apt install -y zsh vim git curl wget build-essential wslu python3 python3-pip
+#       - |
+#         read -p "Voulez-vous définir Zsh comme shell par défaut ? [y/N] " yn
+#         if [ "$yn" = "y" ]; then
+#           chsh -s $(which zsh)
+#           echo "Shell changé en Zsh. Veuillez vous reconnecter pour que le changement prenne effet."
+#         fi
+
+#   install-starship:
+#     desc: Installe le prompt Starship
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "Starship prompt" }
+#       - echo "Installation du prompt Starship..."
+#       - curl -sS https://starship.rs/install.sh | sh
+#       - echo "Starship installé"
+
+#   wsl-setup:
+#     desc: Installe les éléments de base pour WSL2
+#     deps: [install-essential-packages, install-starship, install-task]
+
+#   nvm-setup:
+#     desc: Installe NVM (Node Version Manager)
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "NVM (Node Version Manager) v{{.NVM_VERSION}}" }
+#       - echo "Installation de NVM version {{.NVM_VERSION}}..."
+#       - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v{{.NVM_VERSION}}/install.sh | bash
+#       - echo "NVM installé. Redémarrez votre terminal ou exécutez 'source ~/.zshrc' pour l'activer."
+#       - echo "Vous pouvez ensuite installer Node.js avec nvm install --lts"
+
+#   conda-setup:
+#     desc: Installe Miniconda
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "Miniconda (gestionnaire d'environnements Python)" }
+#       - echo "Installation de Miniconda3..."
+#       - mkdir -p ~/miniconda3
+#       - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+#       - bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+#       - rm ~/miniconda3/miniconda.sh
+#       - echo "Miniconda installé dans ~/miniconda3"
+#       - echo "Ajoutez ceci à votre .bashrc ou .zshrc eval \"$(~/miniconda3/bin/conda shell.bash hook)\""
+
+#   ollama-setup:
+#     desc: Installe Ollama
+#     deps: [check-wsl]
+#     interactive: true
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "Ollama (moteur de modèles d'IA local)" }
+#       - |
+#         if command -v ollama >/dev/null 2>&1; then
+#           echo "Ollama est déjà installé. Version actuelle :"
+#           ollama --version
+#           read -p "Continuer quand même l'installation ? [y/N] " yn
+#           if [ "$yn" != "y" ]; then
+#             exit 1
+#           fi
+#         fi
+#       - echo "Installation de Ollama..."
+#       - curl https://ollama.ai/install.sh | sh
+#       - echo "Vérification de l'installation..."
+#       - cmd: ollama --version
+#         ignore_error: true
+#       - echo "Ollama installé avec succès"
+
+#   cuda-setup:
+#     desc: Installe CUDA
+#     deps: [check-wsl]
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "CUDA {{.CUDA_VERSION}} (pour calculs GPU)" }
+#       - chmod +x ./scripts/cuda-install.sh
+#       - ./scripts/cuda-install.sh {{.CUDA_VERSION}}
+
+#   init-scripts:
+#     desc: Prépare les scripts nécessaires
+#     silent: true
+#     cmds:
+#       - mkdir -p ./scripts
+#       - echo "Extraction des scripts d'installation..."
+#       - cp -f ${PWD}/scripts/cuda-install.sh ./scripts/cuda-install.sh || { echo "Création de cuda-install.sh"; cat > ./scripts/cuda-install.sh << 'EOL'
+
+#   all:
+#     desc: Install everything
+#     cmds:
+#       - task: utils:confirm
+#         vars:
+#           {
+#             TASK: "l'ENVIRONNEMENT COMPLET (tous les outils et configurations)",
+#           }
+#       - task: backup-config
+#       - task: init-scripts
+#       - task: check-wsl
+#       - task: wsl-setup
+#       - task: nvm-setup
+#       - task: conda-setup
+#       - task: cuda-setup
+#       - task: ollama-setup
+#       - task: install
+#       - echo "✅ Installation complète terminée. Redémarrez votre terminal."
+
+#   dev-ml:
+#     desc: Environnement ML (CUDA + Conda + Ollama)
+#     cmds:
+#       - task: check-wsl
+#       - task: cuda-setup
+#       - task: conda-setup
+#       - task: ollama-setup
+
+#   clean:
+#     desc: Nettoie les fichiers/scripts installés localement
+#     cmds:
+#       - echo "Suppression de Miniconda et des scripts..."
+#       - rm -rf ~/miniconda3
+#       - rm -rf ./scripts
+#       - echo "🧹 Nettoyage terminé"
+
+#   reset-config:
+#     desc: Réinitialiser les fichiers de configuration depuis le dépôt
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "la réinitialisation des fichiers de configuration" }
+#       - cp -f ./config/zsh/.zshrc ~/.zshrc
+#       - cp -f ./config/zsh/.zsh_aliases ~/.zsh_aliases
+#       - cp -f ./config/git/.gitconfig ~/.gitconfig
+#       - cp -f ./config/git/.gitignore ~/.gitignore
+#       - mkdir -p ~/.config
+#       - cp -f ./config/starship/starship.toml ~/.config/starship.toml
+#       - echo "✅ Fichiers de configuration réinitialisés."
+
+#   backup-config:
+#     desc: Sauvegarder les fichiers de configuration existants dans ./config-backup/
+#     cmds:
+#       - task: utils:confirm
+#         vars: { TASK: "la sauvegarde des fichiers de configuration" }
+#       - mkdir -p ./config-backup
+#       - cp -f ~/.zshrc ./config-backup/zshrc.bak || echo "~/.zshrc non trouvé"
+#       - cp -f ~/.zsh_aliases ./config-backup/zsh_aliases.bak || echo "~/.zsh_aliases non trouvé"
+#       - cp -f ~/.gitconfig ./config-backup/gitconfig.bak || echo "~/.gitconfig non trouvé"
+#       - cp -f ~/.gitignore ./config-backup/gitignore.bak || echo "~/.gitignore non trouvé"
+#       - cp -f ~/.config/starship.toml ./config-backup/starship.toml.bak || echo "starship.toml non trouvé"
+#       - echo "✅ Sauvegarde terminée dans ./config-backup/"
+
+#   restore-config:
+#     desc: Restaurer les fichiers de configuration depuis ./config-backup/ (avec vérification)
+#     cmds:
+#       - task: utils:confirm
+#         vars:
+#           { TASK: "la restauration des fichiers de configuration sauvegardés" }
+#       - |
+#         restore_file() {
+#           local src=$1
+#           local dest=$2
+#           local label=$3
+#           if [ -f "$src" ]; then
+#             cp -f "$src" "$dest"
+#             echo "✅ $label restauré vers $dest"
+#           else
+#             echo "⚠️  Fichier de sauvegarde absent : $src"
+#           fi
+#         }
+
+#         mkdir -p ~/.config
+
+#         restore_file "./config-backup/zshrc.bak" ~/.zshrc ".zshrc"
+#         restore_file "./config-backup/zsh_aliases.bak" ~/.zsh_aliases ".zsh_aliases"
+#         restore_file "./config-backup/gitconfig.bak" ~/.gitconfig ".gitconfig"
+#         restore_file "./config-backup/gitignore.bak" ~/.gitignore ".gitignore"
+#         restore_file "./config-backup/starship.toml.bak" ~/.config/starship.toml "starship.toml"
+
+#         echo "🔄 Restauration terminée."
+
+

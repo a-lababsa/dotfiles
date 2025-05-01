@@ -2,15 +2,16 @@ version: "3"
 
 tasks:
   confirm:
-    desc: Confirm before proceeding with installation
+    desc: Demande de confirmation utilisateur avant d’exécuter une tâche
     silent: true
     cmds:
       - |
-        echo "=== Vous êtes sur le point d'installer: {{.TASK}} ==="
-        echo "Cette opération peut modifier votre système."
-        read -p "Voulez-vous continuer ? [y/N] " yn
-        if [ "$yn" != "y" ] && [ "$yn" != "Y" ]; then
-          echo "Installation annulée."
-          exit 1
-        fi
-        echo "Continuation de l'installation..."
+        echo ""
+        echo "🔒 ⚠️  ATTENTION : vous êtes sur le point d'exécuter : {{.TASK}}"
+        echo "Cette opération pourrait modifier des fichiers système ou installer des logiciels."
+        echo ""
+        read -p "✅ Voulez-vous continuer ? [y/N] " yn
+        case "$yn" in
+          [yY]) echo "➡️  L'installation continue..." ;;
+          *) echo "❌ Installation annulée." && exit 1 ;;
+        esac
