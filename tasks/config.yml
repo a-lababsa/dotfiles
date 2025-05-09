@@ -1,5 +1,8 @@
 version: '3.0'
 
+includes:
+  utils: ../scripts/utils.yml
+
 tasks:
   install:
     desc: Installer les fichiers de configuration

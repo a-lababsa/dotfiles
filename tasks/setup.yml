@@ -1,5 +1,8 @@
 version: '3'
 
+includes:
+  utils: ../scripts/utils.yml
+
 tasks:
   install-essential-packages:
     desc: Installer les paquets essentiels

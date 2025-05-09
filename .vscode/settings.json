@@ -4,7 +4,9 @@
             "file:///home/icarus/workspace/dotfiles/tasks/setup.yml",
             "file:///home/icarus/workspace/dotfiles/tasks/config.yml",
             "file:///home/icarus/workspace/dotfiles/tasks/env.yml",
-            "file:///home/icarus/workspace/dotfiles/tasks/cuda.yml"
+            "file:///home/icarus/workspace/dotfiles/tasks/cuda.yml",
+            "file:///home/icarus/workspace/dotfiles/tasks/integrations.yml",
+            "file:///home/icarus/workspace/dotfiles/tasks/ui.yml"
         ]
     }
 }

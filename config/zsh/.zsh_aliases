@@ -1,0 +1,48 @@
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ll='ls -la'
+alias l='ls -lah'
+
+# System
+alias update='sudo apt update && sudo apt upgrade -y'
+alias cleanup='sudo apt autoremove -y && sudo apt clean'
+alias ports='sudo lsof -i -P -n | grep LISTEN'
+
+# Git shortcuts
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline --graph --decorate'
+alias gcm='git checkout main'
+alias gcd='git checkout develop'
+
+# Docker
+alias dps='docker ps'
+alias dimg='docker images'
+alias dc='docker-compose'
+
+# Development
+alias py='python3'
+alias pip='pip3'
+alias npmls='npm list -g --depth=0'
+alias nrun='npm run'
+alias serve='python3 -m http.server'
+
+# WSL specific
+alias explorer='explorer.exe'
+alias clip='clip.exe'
+alias notepad='notepad.exe'
+alias cmd='cmd.exe /c'
+alias pwsh='powershell.exe'
+
+# Directory shortcuts
+alias dev='cd ~/workspace'
+alias docs='cd ~/Documents'
+alias dotf='cd ~/workspace/dotfiles'
+
+# Task shortcuts
+alias ta='task'
+alias tall='task all'
+alias tl='task --list-all'

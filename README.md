@@ -1,146 +1,175 @@
-# WSL2 Development Environment Setup
-
-A comprehensive toolkit for setting up a full-featured development environment in WSL2 (Windows Subsystem for Linux).
-
-## Overview
-
-This project provides a set of automated tasks and scripts to configure a complete development environment on WSL2 Ubuntu. It installs and configures common development tools, programming language environments, and utilities required for software development.
-
-## Features
-
-- **Configuration Management**: ZSH, Git, Vim, Starship prompt
-- **Development Tools**: Node.js (via NVM), Python (via Miniconda)
-- **AI & GPU Acceleration**: CUDA for GPU computing, Ollama for local AI models
-- **Interactive Installation**: Confirmation prompts before making system changes
-- **Modular Design**: Tasks can be run individually or all at once
+# Installation and Usage Guide
 
 ## Prerequisites
 
+Before you begin, ensure you have:
+
+- Windows 10 version 2004 or higher, or Windows 11
 - WSL2 with Ubuntu installed
-- Administrator privileges on your WSL2 instance
+  - Run `wsl --install -d Ubuntu` in PowerShell with admin privileges if not installed
+- Administrator privileges on your Windows machine and WSL2 instance
 
-## Installation
+## Installation Options
 
-### Quick Start (If you already have Task installed)
+### Quick Start (One Command Setup)
 
-```bash
-# View available tasks
-task
-
-# Install everything
-task all
-
-# Or choose specific components
-task install-essential-packages
-task nvm-setup
-task cuda-setup
-```
-
-### First-time Setup (Without Task)
+If you want to install everything in one go:
 
 ```bash
-# Clone this repository
+# Clone the repository
 git clone https://github.com/a-lababsa/dotfiles.git
 cd dotfiles
 
-# Make the script executable
-chmod +x ./scripts/config-install.sh
+# Make scripts executable
+chmod +x ./scripts/*.sh
 
-# Install Task first
+# Install Task first (if not already installed)
 ./scripts/config-install.sh $(pwd) --install-task --only
 
-# Then install everything
-task all
+# Install everything including all integrations
+task full-setup
 ```
 
-## Available Tasks
+### Modular Installation
 
-| Task | Description |
-|------|-------------|
-| `install` | Install configuration files |
-| `install-task` | Install Task (taskfile.dev) task runner |
-| `task-only` | Only install Task without configuration files |
-| `install-essential-packages` | Install essential packages (zsh, vim, git, curl, etc.) |
-| `install-starship` | Install Starship prompt |
-| `wsl-setup` | Setup basic WSL2 development environment |
-| `nvm-setup` | Install NVM (Node Version Manager) |
-| `conda-setup` | Setup Miniconda for Python |
-| `ollama-setup` | Install Ollama (local AI models) |
-| `cuda-setup` | Setup CUDA for GPU computing |
-| `all` | Install everything |
+To pick and choose which components you want to install:
 
-## Configuration Files
+```bash
+# Clone the repository
+git clone https://github.com/a-lababsa/dotfiles.git
+cd dotfiles
 
-The project installs and configures:
+# Make scripts executable
+chmod +x ./scripts/*.sh
 
-- ZSH shell with aliases
-- Git global configuration
-- Vim settings
-- Starship prompt customization
+# Install Task first (if not already installed)
+./scripts/config-install.sh $(pwd) --install-task --only
 
-All configuration files are stored in the `config/` directory, organized by tool.
+# View available tasks
+task
 
-## CUDA Setup
+# Install only specific components
+task setup:install-essential-packages  # Basic tools (zsh, git, etc.)
+task env:nvm-setup                     # Node.js via NVM
+task env:conda-setup                   # Python via Miniconda
+task cuda:cuda-setup                   # CUDA for GPU computing
+task env:ollama-setup                  # Ollama for local AI models
+task integrations:docker-setup         # Docker and Docker Compose
+task integrations:ssh-setup            # SSH keys and configuration
+task integrations:vscode-setup         # VS Code integration
+```
 
-The CUDA installation is handled by a dedicated script that:
+### Pre-defined Bundles
 
-1. Verifies WSL2 compatibility
-2. Checks for existing CUDA installations
-3. Downloads and installs the appropriate CUDA version
-4. Updates your PATH in `.zshrc`
+We've created some useful bundles for common use cases:
+
+```bash
+# Just the basics (shell, git, editors)
+task setup:install-essential-packages
+
+# Full development tools
+task dev-tools
+
+# Machine learning environment
+task ml-env
+
+# Configuration files only (zsh, git, vim, starship)
+task config:install
+
+# All integrations (Docker, SSH, VS Code)
+task integrations:all-integrations
+```
+
+## After Installation
+
+After installation, you should:
+
+1. **Restart your terminal** or run `source ~/.zshrc` to apply changes
+2. Verify the installation with `task test`
+3. For Docker, you may need to run `wsl --shutdown` in PowerShell and restart WSL
+4. For CUDA, verify with `nvcc --version` and `nvidia-smi`
 
 ## Customization
 
-### Changing Default Versions
+### User-specific Configuration
 
-You can modify the versions of installed tools by editing the variables at the top of `Taskfile.yml`:
+Your personal configurations won't be overwritten when updating:
 
-```yaml
-vars:
-  CUDA_VERSION: 12.8
-  NVM_VERSION: 0.40.1
+```bash
+# Set up user configuration files
+task integrations:user-config
 ```
 
-### Adding Custom Configuration
+This creates files in `~/.config/dotfiles-local/` that are sourced from the main configuration files:
 
-1. Add your custom configuration files to the appropriate subdirectory in `config/`
-2. Run `task install` to apply changes
+- `~/.config/dotfiles-local/zshrc.local`
+- `~/.config/dotfiles-local/zsh_aliases.local`
+- `~/.config/dotfiles-local/gitconfig.local` 
+
+Edit these files to add your personal configurations.
+
+### Customizing Installed Versions
+
+To change the default versions of various tools, edit the `.env` file in the root directory:
+
+```
+CUDA_VERSION=12.8
+NVM_VERSION=0.40.1
+```
+
+## Maintenance
+
+### Updating the Environment
+
+To update all installed tools:
+
+```bash
+task update
+```
+
+### Backup and Restore
+
+```bash
+# Backup your current configuration
+task config:backup-config
+
+# Restore from backup
+task config:restore-config
+```
 
 ## Troubleshooting
 
-### Task not found after installation
+### Common Issues
 
-If you installed Task but the `task` command isn't recognized:
+1. **Task command not found**: Run `export PATH="$HOME/.local/bin:$PATH"`
+2. **Permission denied**: Make sure scripts are executable with `chmod +x ./scripts/*.sh`
+3. **CUDA installation fails**: Ensure your Windows host has the NVIDIA drivers installed
+4. **Docker doesn't start**: Run `wsl --shutdown` in PowerShell and restart WSL
 
-```bash
-export PATH="$HOME/.local/bin:$PATH"
-source ~/.zshrc
-```
+### Getting Help
 
-### Permission issues during installation
-
-Try running with sudo for specific commands that require elevated privileges:
+For more detailed information about any task:
 
 ```bash
-sudo apt update && sudo apt upgrade -y
+task help TASK_NAME
 ```
 
-## Contributing
+To see all available tasks:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+```bash
+task
+```
 
-## License
+## Uninstallation
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+To remove all installed components:
 
-## Acknowledgments
+```bash
+# Clean up installed files
+task clean
+```
 
-- [Taskfile](https://taskfile.dev/) for the task execution framework
-- [Starship](https://starship.rs/) for the cross-shell prompt
-- [NVM](https://github.com/nvm-sh/nvm) for Node.js version management
-- [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for Python environment management
-- [Ollama](https://ollama.ai/) for local AI model deployment
+Note: This doesn't uninstall system packages. To fully remove everything, you would need to:
+
+1. Uninstall packages with `sudo apt remove package-name`
+2. Remove configuration files with `rm -rf ~/.config/dotfiles-local`

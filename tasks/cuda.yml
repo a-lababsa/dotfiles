@@ -1,5 +1,8 @@
 version: "3"
 
+includes:
+  utils: ../scripts/utils.yml
+
 tasks:
   cuda-setup:
     desc: Installer CUDA

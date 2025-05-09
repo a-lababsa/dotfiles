@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  progress-demo:
+    desc: Demonstrate the progress bar functionality
+    cmds:
+      - chmod +x ./scripts/progress.sh
+      - ./scripts/progress.sh
+
+  install-progress:
+    desc: Install the progress bar script
+    cmds:
+      - mkdir -p ./scripts
+      - cp -f {{.ROOT_DIR}}/scripts/progress.sh ./scripts/progress.sh
+      - chmod +x ./scripts/progress.sh
+      - echo "✅ Progress bar script installed to ./scripts/progress.sh"
+      - echo "   Import it in your scripts with source \"\$(dirname \"\$0\")/progress.sh\""
