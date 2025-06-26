@@ -7,35 +7,47 @@ BASE_DIR="${1:-${PWD}}"
 OPTION="${2:-}"
 OPTION_ARG="${3:-}"
 
+# Source version utilities
+source "$BASE_DIR/scripts/version-utils.sh"
+
 echo "➡️ Lancement du script d'installation de la configuration..."
 
 # Fonction pour installer Task (taskfile.dev)
 install_task() {
-  if ! command -v task &>/dev/null; then
-    echo "🔧 Installation de Task..."
+  local latest_version
+  latest_version=$(get_latest_github_version "go-task/task")
+  
+  if check_version "task" "$latest_version" "task --version"; then
+    return 0
+  fi
 
-    TASK_VERSION=$(curl -s https://api.github.com/repos/go-task/task/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/v//')
-
-    echo "📦 Version détectée : $TASK_VERSION"
-    sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin "v${TASK_VERSION}"
-
-    if command -v task &>/dev/null; then
-      echo "✅ Task installé avec succès (v$(task --version))"
-    else
-      export PATH="$HOME/.local/bin:$PATH"
-      if command -v task &>/dev/null; then
-        echo "✅ Task installé avec succès après mise à jour du PATH"
-
-        if ! grep -q 'export PATH="\$HOME/.local/bin:\$PATH"' ~/.zshrc 2>/dev/null; then
-          echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
-          echo "🛠️ PATH mis à jour dans .zshrc"
-        fi
-      else
-        echo "❌ Échec de l'installation de Task."
-      fi
-    fi
+  echo "🔧 Installation de Task v$latest_version..."
+  
+  local install_script
+  install_script=$(download_with_cache "https://taskfile.dev/install.sh" "task-install.sh")
+  
+  if [[ -f "$install_script" ]]; then
+    sh "$install_script" -d -b ~/.local/bin "v${latest_version}"
   else
-    echo "✅ Task déjà installé (v$(task --version))"
+    echo "❌ Failed to download Task installer"
+    return 1
+  fi
+
+  if command -v task &>/dev/null; then
+    echo "✅ Task installé avec succès (v$(task --version))"
+  else
+    export PATH="$HOME/.local/bin:$PATH"
+    if command -v task &>/dev/null; then
+      echo "✅ Task installé avec succès après mise à jour du PATH"
+
+      if ! grep -q 'export PATH="\$HOME/.local/bin:\$PATH"' ~/.zshrc 2>/dev/null; then
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+        echo "🛠️ PATH mis à jour dans .zshrc"
+      fi
+    else
+      echo "❌ Échec de l'installation de Task."
+      return 1
+    fi
   fi
 }
 

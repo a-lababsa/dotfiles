@@ -30,24 +30,44 @@ tasks:
 
   all:
     desc: Install the complete environment (all tools and configurations)
+    deps: [system-check, ui:install-progress, config:backup-config]
     cmds:
-      - task: ui:install-progress  # Install progress bar first
-      - task: config:backup-config
+      - |
+        chmod +x ./scripts/logger.sh
+        source ./scripts/logger.sh
+        init_progress 6
+        update_progress "System packages" "starting"
       - task: setup:install-essential-packages
+      - |
+        source ./scripts/logger.sh
+        update_progress "System packages" "completed"
+        update_progress "Shell enhancements" "starting"
       - task: setup:install-starship
       - task: setup:install-task
-      - task: env:nvm-setup
-      - task: env:conda-setup
-      - task: cuda:cuda-setup 
-      - task: env:ollama-setup
+      - |
+        source ./scripts/logger.sh
+        update_progress "Shell enhancements" "completed"
+        update_progress "Development environments" "starting"
+      - task: env:parallel-setup
+      - |
+        source ./scripts/logger.sh
+        update_progress "Development environments" "completed"
+        update_progress "Configuration files" "starting"
       - task: config:install
+      - |
+        source ./scripts/logger.sh
+        update_progress "Configuration files" "completed"
+        update_progress "Cleanup" "starting"
+        chmod +x ./scripts/version-utils.sh
+        source ./scripts/version-utils.sh && clean_cache
+        update_progress "Cleanup" "completed"
+        show_summary
       - echo "🚀 Installation complete. Please restart your terminal."
       
   dev-tools:
     desc: Install only developer tools (Node.js, Python, Git)
+    deps: [ui:install-progress, setup:install-essential-packages]
     cmds:
-      - task: ui:install-progress  # Install progress bar first
-      - task: setup:install-essential-packages
       - task: env:nvm-setup
       - task: env:conda-setup
       - echo "✅ Developer tools installed."
@@ -102,6 +122,18 @@ tasks:
       - echo "Updating Ollama..."
       - if command -v ollama >/dev/null 2>&1; then curl https://ollama.ai/install.sh | sh; fi
       - echo "🔄 Updates completed."
+
+  rollback:
+    desc: Rollback recent installation changes
+    cmds:
+      - chmod +x ./scripts/error-handler.sh
+      - ./scripts/error-handler.sh perform_rollback
+      
+  system-check:
+    desc: Run system requirements check
+    cmds:
+      - chmod +x ./scripts/version-utils.sh
+      - source ./scripts/version-utils.sh && check_system_requirements
       
   full-setup:
     desc: Install everything including all integrations

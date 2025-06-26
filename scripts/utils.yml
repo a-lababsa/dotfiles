@@ -15,3 +15,20 @@ tasks:
           [yY]) echo "➡️  L'installation continue..." ;;
           *) echo "❌ Installation annulée." && exit 1 ;;
         esac
+
+  batch-confirm:
+    desc: Batch confirmation for multiple tasks
+    silent: true
+    cmds:
+      - |
+        echo ""
+        echo "🔒 ⚠️  ATTENTION : vous êtes sur le point d'exécuter plusieurs tâches :"
+        echo "{{.TASKS}}"
+        echo ""
+        echo "Ces opérations pourraient modifier des fichiers système ou installer des logiciels."
+        echo ""
+        read -p "✅ Voulez-vous continuer avec toutes ces tâches ? [y/N] " yn
+        case "$yn" in
+          [yY]) echo "➡️  L'installation continue..." ;;
+          *) echo "❌ Installation annulée." && exit 1 ;;
+        esac

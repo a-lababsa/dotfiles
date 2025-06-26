@@ -42,9 +42,7 @@ tasks:
 
   all-integrations:
     desc: Set up all integrations (Docker, SSH, VS Code, user config)
+    deps: [docker-setup, ssh-setup, vscode-setup]
     cmds:
-      - task: docker-setup
-      - task: ssh-setup
-      - task: vscode-setup
       - task: user-config
       - echo "🎉 All integrations have been set up!"
