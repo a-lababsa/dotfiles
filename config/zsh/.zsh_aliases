@@ -1,8 +1,16 @@
 # Navigation
 alias ..='cd ..'
 alias ...='cd ../..'
-alias ll='ls -la'
-alias l='ls -lah'
+
+# Modern CLI replacements
+alias cat='bat'                    # Syntax highlighting
+alias ls='eza'                     # Modern ls with Git status
+alias ll='eza -la --git'           # Detailed list with Git info
+alias l='eza -la --git --header'   # With header
+alias tree='eza --tree'            # Tree view
+alias find='fd'                    # Fast find alternative
+alias grep='rg'                    # Ripgrep for fast search
+alias man='tldr'                   # Concise documentation
 
 # System
 alias update='sudo apt update && sudo apt upgrade -y'
@@ -40,9 +48,14 @@ alias pwsh='powershell.exe'
 # Directory shortcuts
 alias dev='cd ~/workspace'
 alias docs='cd ~/Documents'
-alias dotf='cd ~/workspace/dotfiles'
 
-# Task shortcuts
-alias ta='task'
-alias tall='task all'
-alias tl='task --list-all'
+# Fallbacks for compatibility
+alias oldcat='command cat'         # Original cat command
+alias oldls='command ls'           # Original ls command
+alias oldfind='command find'       # Original find command
+alias oldgrep='command grep'       # Original grep command
+alias oldman='command man'         # Original man command
+
+# Utility shortcuts
+alias reload='source ~/.zshrc'     # Reload shell config
+alias path='echo -e ${PATH//:/\\n}' # Display PATH nicely

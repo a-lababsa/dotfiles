@@ -1,0 +1,64 @@
+{
+  // Editor settings
+  "theme": "One Dark",
+  "buffer_font_size": 14,
+  "ui_font_size": 14,
+  "tab_size": 2,
+  "soft_wrap": "editor_width",
+  "show_whitespaces": "selection",
+  "remove_trailing_whitespace_on_save": true,
+  "ensure_final_newline_on_save": true,
+
+  // UI preferences
+  "show_completions_on_input": true,
+  "show_completion_documentation": true,
+  "use_on_type_format": true,
+  "format_on_save": "on",
+  "autosave": "on_focus_change",
+  "auto_update": true,
+
+  // File tree
+  "project_panel": {
+    "dock": "left",
+    "default_width": 240
+  },
+
+  // Terminal
+  "terminal": {
+    "shell": "system",
+    "dock": "bottom"
+  },
+
+  // Git
+  "git": {
+    "inline_blame": {
+      "enabled": true
+    }
+  },
+
+  // Language servers
+  "lsp": {
+    "typescript-language-server": {
+      "initialization_options": {
+        "preferences": {
+          "includeInlayParameterNameHints": "all",
+          "includeInlayVariableTypeHints": true
+        }
+      }
+    }
+  },
+
+  // Language specific
+  "languages": {
+    "JavaScript": {
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      }
+    },
+    "TypeScript": {
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      }
+    }
+  }
+}
