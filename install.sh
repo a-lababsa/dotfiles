@@ -217,6 +217,12 @@ create_symlinks() {
             link_file "$PWD/config/zed/keymap.json" "$HOME/.config/zed/keymap.json"
         fi
     fi
+    
+    # Navi configuration
+    if [[ -d "config/navi" ]]; then
+        mkdir -p "$HOME/.config/navi"
+        link_file "$PWD/config/navi/cheats" "$HOME/.config/navi/cheats"
+    fi
 
     if [[ -d "bin" ]]; then
         mkdir -p "$HOME/.local/bin"

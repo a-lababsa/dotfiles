@@ -1,0 +1,316 @@
+% zed, raccourcis, fichiers, gestion
+# Nouveau fichier
+CMD + N
+
+# Nouvelle fenêtre
+CMD + SHIFT + N
+
+# Ouvrir dossier
+CMD + O
+
+# Ouvrir dossier distant
+CMD + ALT + SHIFT + O
+
+# Sauvegarder
+CMD + S
+
+# Sauvegarder sous...
+CMD + SHIFT + S
+
+# Sauvegarder tout
+CMD + ALT + S
+
+# Fermer fenêtre
+CMD + SHIFT + W
+
+# Quitter Zed
+CMD + Q
+
+% zed, raccourcis, navigation, recherche
+# Palette de commandes
+CMD + SHIFT + P
+
+# Aller au fichier
+CMD + P
+
+# Aller au fichier (alternatif)
+CMD + E
+
+# Aller au symbole dans l'éditeur
+CMD + SHIFT + O
+
+# Aller à la ligne/colonne
+CMD + G
+
+# Rechercher dans le projet
+CMD + SHIFT + F
+
+# Rechercher dans le fichier
+CMD + F
+
+# Projets récents
+CMD + ALT + O
+
+% zed, raccourcis, édition, texte
+# Annuler
+CMD + Z
+
+# Refaire
+CMD + SHIFT + Z
+
+# Couper
+CMD + X
+
+# Copier
+CMD + C
+
+# Coller
+CMD + V
+
+# Sélectionner tout
+CMD + A
+
+# Commenter/décommenter ligne
+CMD + /
+
+# Dupliquer la sélection
+CMD + SHIFT + D
+
+# Déplacer ligne vers le haut
+ALT + ↑
+
+# Déplacer ligne vers le bas
+ALT + ↓
+
+% zed, raccourcis, sélection, multicurseur
+# Étendre la sélection
+ALT + SHIFT + →
+
+# Réduire la sélection
+ALT + SHIFT + ←
+
+# Ajouter curseur au dessus
+ALT + SHIFT + ↑
+
+# Ajouter curseur en dessous
+ALT + SHIFT + ↓
+
+# Sélectionner occurrence suivante
+CMD + SHIFT + D
+
+# Sélectionner toutes les occurrences
+CMD + SHIFT + L
+
+% zed, raccourcis, navigation, code
+# Aller à la définition
+F12
+
+# Aller à la définition de type
+CMD + F12
+
+# Trouver toutes les références
+ALT + SHIFT + F12
+
+# Retour (navigation)
+CMD + ALT + -
+
+# Problème suivant
+F8
+
+# Problème précédent
+SHIFT + F8
+
+# Renommer symbole
+F2
+
+# Aperçu de définition (hover)
+CMD + K, CMD + I
+
+% zed, raccourcis, panneaux, interface
+# Basculer panneau gauche
+CMD + B
+
+# Basculer panneau droit
+CMD + ALT + B
+
+# Basculer panneau bas
+CMD + J
+
+# Fermer tous les panneaux
+CMD + ALT + Y
+
+# Panneau projet
+CMD + SHIFT + E
+
+# Panneau outline
+CMD + SHIFT + B
+
+# Panneau collaboration
+CMD + SHIFT + C
+
+# Panneau terminal
+CMD + `
+
+# Panneau diagnostics
+CMD + SHIFT + M
+
+% zed, raccourcis, splits, division
+# Split vers le haut
+CMD + K, ↑
+
+# Split vers le bas
+CMD + K, ↓
+
+# Split vers la gauche
+CMD + K, ←
+
+# Split vers la droite
+CMD + K, →
+
+# Naviguer entre les panes
+CMD + 1-9
+
+# Onglet suivant
+CMD + ALT + →
+
+# Onglet précédent
+CMD + ALT + ←
+
+% zed, raccourcis, terminal, intégré
+# Basculer terminal
+CMD + `
+
+# Nouveau terminal
+CMD + SHIFT + `
+
+# Navigation vim dans terminal
+h, j, k, l (mode vim)
+
+% zed, raccourcis, git, contrôle-version
+# Panneau git
+CMD + SHIFT + G
+
+# Fetch depuis remote
+CMD + SHIFT + F (dans panneau git)
+
+# Pull depuis remote
+CMD + SHIFT + P (dans panneau git)
+
+# Push vers remote
+CMD + SHIFT + U (dans panneau git)
+
+# Stage tous les changements
+CMD + SHIFT + A (dans panneau git)
+
+# Commit
+CMD + Enter (dans panneau git)
+
+# Amend dernier commit
+CMD + SHIFT + Enter (dans panneau git)
+
+# Sélectionner branche
+CMD + B (dans panneau git)
+
+% zed, raccourcis, ia, assistant
+# Ouvrir assistant IA
+CMD + ?
+
+# Thread texte IA
+CMD + SHIFT + ?
+
+# Chat IA standard
+CMD + ALT + ?
+
+# Générer suggestions code inline
+CMD + I
+
+# Envoyer message assistant
+CMD + Enter (dans assistant)
+
+# Suggestions d'édition IA
+CMD + SHIFT + I
+
+# Sélectionner modèle IA
+CMD + SHIFT + M (dans assistant)
+
+# Nouveau thread IA
+CMD + N (dans assistant)
+
+# Plein écran assistant
+CMD + SHIFT + Enter (dans assistant)
+
+% zed, raccourcis, vim, mode
+# Activer mode vim
+# Ajouter "vim_mode": true dans settings
+
+# Navigation vim
+h, j, k, l
+
+# Modes vim
+i (insert), v (visual), : (command)
+
+# Aller à la ligne en mode vim
+:10 (aller ligne 10)
+
+# Fin de ligne et édition
+A
+
+# Début de ligne et édition
+I
+
+# Nouvelle ligne en dessous
+o
+
+# Nouvelle ligne au dessus
+O
+
+# Navigation entre panes vim
+CTRL + W, h/j/k/l
+
+% zed, raccourcis, configuration, paramètres
+# Ouvrir paramètres
+CMD + ,
+
+# Ouvrir keymap par défaut
+CMD + K, CMD + S (via palette)
+
+# Ouvrir keymap utilisateur
+CMD + SHIFT + P puis "zed: open keymap"
+
+# Ouvrir paramètres par défaut
+CMD + SHIFT + P puis "zed: open default settings"
+
+# Sélecteur keymap de base
+CMD + SHIFT + P puis "welcome: toggle base keymap selector"
+
+% zed, raccourcis, thèmes, apparence
+# Changer de thème
+CMD + K, CMD + T
+
+# Basculer thème clair/sombre
+CMD + U
+
+% zed, raccourcis, projet, explorateur
+# Révéler dans Finder (macOS)
+CMD + SHIFT + R (focus sur projet)
+
+# Navigation vim dans projet
+h, j, k, l
+
+# Ouvrir fichier
+Enter ou o
+
+# Ouvrir dans nouvel onglet
+t
+
+# Nouveau fichier
+a
+
+# Nouveau dossier
+A
+
+# Supprimer
+d
+
+# Renommer
+r
