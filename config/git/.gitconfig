@@ -1,7 +1,10 @@
 [user]
-	name = Alexandre lababsa
+	name = Alexandre Lababsa
+	email = dev@example.com
 [alias]
     st = status
     ci = commit
     co = checkout
     br = branch
+[init]
+	defaultBranch = main

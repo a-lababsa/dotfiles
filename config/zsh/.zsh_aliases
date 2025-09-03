@@ -2,19 +2,59 @@
 alias ..='cd ..'
 alias ...='cd ../..'
 
-# Modern CLI replacements
-alias cat='bat'                    # Syntax highlighting
-alias ls='eza'                     # Modern ls with Git status
-alias ll='eza -la --git'           # Detailed list with Git info
-alias l='eza -la --git --header'   # With header
-alias tree='eza --tree'            # Tree view
-alias find='fd'                    # Fast find alternative
-alias grep='rg'                    # Ripgrep for fast search
-alias man='tldr'                   # Concise documentation
+# Modern CLI replacements (with fallbacks for compatibility)
+if command -v bat >/dev/null 2>&1; then
+    alias cat='bat'                    # Syntax highlighting
+elif command -v batcat >/dev/null 2>&1; then
+    alias cat='batcat'                 # Ubuntu/Debian uses batcat
+else
+    alias cat='command cat'            # Fallback to original cat
+fi
 
-# System
-alias update='sudo apt update && sudo apt upgrade -y'
-alias cleanup='sudo apt autoremove -y && sudo apt clean'
+if command -v eza >/dev/null 2>&1; then
+    alias ls='eza'                     # Modern ls with Git status
+    alias ll='eza -la --git'           # Detailed list with Git info
+    alias l='eza -la --git --header'   # With header
+    alias tree='eza --tree'            # Tree view
+elif command -v exa >/dev/null 2>&1; then
+    alias ls='exa'                     # Fallback to exa if available
+    alias ll='exa -la --git'
+    alias l='exa -la --git --header'
+    alias tree='exa --tree'
+fi
+
+if command -v fd >/dev/null 2>&1; then
+    alias find='fd'                    # Fast find alternative
+fi
+
+if command -v rg >/dev/null 2>&1; then
+    alias grep='rg'                    # Ripgrep for fast search
+fi
+
+if command -v tldr >/dev/null 2>&1; then
+    alias man='tldr'                   # Concise documentation
+fi
+
+# System (OS-specific update commands)
+case "$(uname -s)" in
+    Darwin)
+        alias update='brew update && brew upgrade'
+        alias cleanup='brew cleanup && brew autoremove'
+        ;;
+    Linux)
+        if command -v apt >/dev/null 2>&1; then
+            alias update='sudo apt update && sudo apt upgrade -y'
+            alias cleanup='sudo apt autoremove -y && sudo apt clean'
+        elif command -v yum >/dev/null 2>&1; then
+            alias update='sudo yum update -y'
+            alias cleanup='sudo yum autoremove -y'
+        elif command -v pacman >/dev/null 2>&1; then
+            alias update='sudo pacman -Syu'
+            alias cleanup='sudo pacman -Rns $(pacman -Qtdq) 2>/dev/null || true'
+        fi
+        ;;
+esac
+
 alias ports='sudo lsof -i -P -n | grep LISTEN'
 
 # Git shortcuts
@@ -38,12 +78,14 @@ alias npmls='npm list -g --depth=0'
 alias nrun='npm run'
 alias serve='python3 -m http.server'
 
-# WSL specific
-alias explorer='explorer.exe'
-alias clip='clip.exe'
-alias notepad='notepad.exe'
-alias cmd='cmd.exe /c'
-alias pwsh='powershell.exe'
+# WSL specific (only load on WSL)
+if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -q Microsoft /proc/version 2>/dev/null; then
+    alias explorer='explorer.exe'
+    alias clip='clip.exe'
+    alias notepad='notepad.exe'
+    alias cmd='cmd.exe /c'
+    alias pwsh='powershell.exe'
+fi
 
 # Directory shortcuts
 alias dev='cd ~/workspace'

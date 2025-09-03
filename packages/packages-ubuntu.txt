@@ -17,7 +17,6 @@ jq
 fd-find
 ripgrep
 bat
-exa
 tldr
 tmux
 vim
