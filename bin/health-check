@@ -1,0 +1,305 @@
+#!/bin/bash
+# System health check for dotfiles installation
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/lib/utils.sh"
+
+# Configuration
+REQUIRED_TOOLS=(
+    "git"
+    "zsh" 
+    "starship"
+    "fzf"
+    "fd"
+    "ripgrep"
+    "bat"
+    "eza"
+)
+
+OPTIONAL_TOOLS=(
+    "nvim"
+    "tmux"
+    "lazygit"
+    "btop"
+    "delta"
+    "zoxide"
+    "direnv"
+    "glow"
+    "dust"
+    "hyperfine"
+    "just"
+)
+
+# Health check results (using arrays for compatibility)
+results_names=()
+results_values=()
+total_checks=0
+passed_checks=0
+failed_checks=0
+
+# Perform a health check
+check() {
+    local name="$1"
+    local test_command="$2"
+    local critical="${3:-false}"
+    
+    ((total_checks++))
+    
+    if eval "$test_command" &>/dev/null; then
+        results_names+=("$name")
+        results_values+=("✅ PASS")
+        ((passed_checks++))
+        return 0
+    else
+        results_names+=("$name")
+        if [[ "$critical" == "true" ]]; then
+            results_values+=("❌ FAIL (Critical)")
+        else
+            results_values+=("⚠️  WARN (Optional)")
+        fi
+        ((failed_checks++))
+        return 1
+    fi
+}
+
+# Check if command exists
+check_command() {
+    local cmd="$1"
+    local critical="${2:-false}"
+    check "$cmd" "command -v $cmd" "$critical"
+}
+
+# Check file exists
+check_file() {
+    local file="$1"
+    local name="${2:-$file}"
+    local critical="${3:-false}"
+    check "$name" "test -f $file" "$critical"
+}
+
+# Check symlink exists and points to correct target
+check_symlink() {
+    local link="$1"
+    local expected_target="$2"
+    local name="${3:-$link}"
+    
+    if [[ -L "$link" ]]; then
+        local actual_target
+        actual_target=$(readlink "$link")
+        if [[ "$actual_target" == "$expected_target" ]]; then
+            check "$name" "true" "false"
+        else
+            results_names+=("$name")
+            results_values+=("⚠️  WARN (Wrong target: $actual_target)")
+            ((total_checks++))
+            ((failed_checks++))
+        fi
+    else
+        check "$name" "false" "false"
+    fi
+}
+
+# Check environment variable
+check_env() {
+    local var="$1"
+    local name="${2:-$var}"
+    local critical="${3:-false}"
+    check "$name" "test -n \"\${$var:-}\"" "$critical"
+}
+
+# Main health check function
+run_health_check() {
+    print_status "🏥 Running dotfiles health check..."
+    echo
+    
+    # Critical tools check
+    print_status "📦 Checking critical tools..."
+    for tool in "${REQUIRED_TOOLS[@]}"; do
+        check_command "$tool" "true"
+    done
+    echo
+    
+    # Optional tools check  
+    print_status "🛠️  Checking optional tools..."
+    for tool in "${OPTIONAL_TOOLS[@]}"; do
+        check_command "$tool" "false"
+    done
+    echo
+    
+    # Configuration files check
+    print_status "📄 Checking configuration files..."
+    check_file "$HOME/.zshrc" "zsh config" "true"
+    check_file "$HOME/.zshenv" "zsh environment" "true"
+    check_file "$HOME/.gitconfig" "git config" "true"
+    check_file "$HOME/.config/starship.toml" "starship config" "false"
+    check_file "$HOME/.zsh_aliases" "zsh aliases" "false"
+    echo
+    
+    # Symlinks check (if dotfiles directory exists)
+    if [[ -d "$HOME/.dotfiles" ]]; then
+        print_status "🔗 Checking symlinks..."
+        check_symlink "$HOME/.zshrc" "$HOME/.dotfiles/config/zsh/.zshrc" ".zshrc symlink"
+        check_symlink "$HOME/.zshenv" "$HOME/.dotfiles/config/zsh/.zshenv" ".zshenv symlink"  
+        check_symlink "$HOME/.gitconfig" "$HOME/.dotfiles/config/git/.gitconfig" ".gitconfig symlink"
+    fi
+    echo
+    
+    # Environment variables check
+    print_status "🌍 Checking environment variables..."
+    check_env "EDITOR" "EDITOR variable" "false"
+    check_env "XDG_CONFIG_HOME" "XDG_CONFIG_HOME" "false"
+    check_env "PATH" "PATH variable" "true"
+    echo
+    
+    # Shell check
+    print_status "🐚 Checking shell configuration..."
+    check "Default shell" "test \"\$SHELL\" = '/bin/zsh' -o \"\$SHELL\" = '/usr/bin/zsh'" "false"
+    check "Zsh version" "zsh --version | grep -q 'zsh 5'" "false"
+    echo
+    
+    # Git configuration check
+    print_status "🔧 Checking Git configuration..."
+    check "Git user name" "git config --global user.name | grep -q '.'" "true"
+    check "Git user email" "git config --global user.email | grep -q '.'" "true"
+    echo
+    
+    # Node.js check (if installed)
+    if command -v node &>/dev/null; then
+        print_status "📦 Checking Node.js setup..."
+        check "Node.js" "node --version" "false"
+        check "npm" "npm --version" "false"
+        if command -v nvm &>/dev/null; then
+            check "NVM" "nvm --version" "false"
+        fi
+    fi
+    echo
+    
+    # Python check (if installed)
+    if command -v python3 &>/dev/null; then
+        print_status "🐍 Checking Python setup..."
+        check "Python 3" "python3 --version" "false"
+        check "pip3" "pip3 --version" "false"
+        if command -v uv &>/dev/null; then
+            check "uv package manager" "uv --version" "false"
+        fi
+    fi
+    echo
+    
+    # Display results
+    print_status "📊 Health Check Results:"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # Display results
+    for i in "${!results_names[@]}"; do
+        printf "%-30s %s\n" "${results_names[$i]}" "${results_values[$i]}"
+    done
+    
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    printf "Total: %d | " "$total_checks"
+    printf "${GREEN}Passed: %d${NC} | " "$passed_checks"
+    printf "${YELLOW}Failed/Warnings: %d${NC}\n" "$failed_checks"
+    echo
+    
+    # Summary and recommendations
+    if [[ $failed_checks -eq 0 ]]; then
+        print_success "🎉 All checks passed! Your dotfiles setup is healthy."
+    elif [[ $failed_checks -lt 5 ]]; then
+        print_warning "⚠️  Some minor issues found. Consider addressing the warnings above."
+    else
+        print_error "❌ Multiple issues detected. Run the installation script to fix critical problems."
+        echo
+        print_status "To fix issues, try:"
+        echo "  ./install.sh           # Full installation"
+        echo "  ./install.sh --dry-run # Preview changes"
+        return 1
+    fi
+    
+    # Recommendations
+    echo
+    print_status "💡 Recommendations:"
+    
+    # Check for missing optional tools
+    missing_tools=()
+    for tool in "${OPTIONAL_TOOLS[@]}"; do
+        if ! command -v "$tool" &>/dev/null; then
+            missing_tools+=("$tool")
+        fi
+    done
+    
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        echo "  • Consider installing: ${missing_tools[*]}"
+    fi
+    
+    # Check for updates
+    if command -v topgrade &>/dev/null; then
+        echo "  • Run 'topgrade' to update all tools"
+    fi
+    
+    if [[ -d "$HOME/.dotfiles/.git" ]]; then
+        echo "  • Update dotfiles: cd ~/.dotfiles && git pull"
+    fi
+    
+    echo "  • Run health check regularly: health-check"
+    
+    return 0
+}
+
+# Quick check function
+quick_check() {
+    local critical_failed=0
+    
+    print_status "🚀 Quick health check..."
+    
+    # Check only critical tools
+    for tool in "${REQUIRED_TOOLS[@]}"; do
+        if ! command -v "$tool" &>/dev/null; then
+            print_error "$tool is not installed"
+            ((critical_failed++))
+        fi
+    done
+    
+    # Check critical files
+    critical_files=("$HOME/.zshrc" "$HOME/.gitconfig")
+    for file in "${critical_files[@]}"; do
+        if [[ ! -f "$file" ]]; then
+            print_error "$file is missing"
+            ((critical_failed++))
+        fi
+    done
+    
+    if [[ $critical_failed -eq 0 ]]; then
+        print_success "✅ Quick check passed"
+        return 0
+    else
+        print_error "❌ $critical_failed critical issues found"
+        print_status "Run 'health-check full' for detailed analysis"
+        return 1
+    fi
+}
+
+# Command dispatch
+case "${1:-full}" in
+    "full"|"all")
+        run_health_check
+        ;;
+    "quick"|"fast")
+        quick_check
+        ;;
+    "help"|"--help"|"-h")
+        echo "Dotfiles Health Check Tool"
+        echo ""
+        echo "Usage: health-check [command]"
+        echo ""
+        echo "Commands:"
+        echo "  full     Complete health check (default)"
+        echo "  quick    Quick critical checks only"
+        echo "  help     Show this help"
+        ;;
+    *)
+        print_error "Unknown command: $1"
+        print_status "Use 'health-check help' for usage information"
+        exit 1
+        ;;
+esac

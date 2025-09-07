@@ -1,0 +1,106 @@
+# Default values, except $time is moved to the left.
+format = """
+$time\
+$username\
+$hostname\
+$directory\
+${custom.separator}\
+$docker_context\
+$container\
+$git_branch\
+$git_status\
+$python\
+$nodejs\
+$rust\
+$cmd_duration\
+$line_break\
+$character"""
+
+[character]
+success_symbol = '[>](bold green)'
+error_symbol = '[>](bold red)'
+
+[docker_context]
+format = '[ 🐋 $context]($style) '
+only_with_files = true
+style = 'blue bold'
+detect_files = ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']
+
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = "🐍 "
+style = "yellow bold"
+
+# Configuration du module Node.js
+[nodejs]
+format = "[$symbol($version )]($style)"
+symbol = "⬢ "
+style = "green bold"
+detect_files = ["package.json", ".node-version"]
+detect_folders = ["node_modules"]
+
+# Configuration du module Rust
+[rust]
+format = "[$symbol($version )]($style)"
+symbol = "🦀 "
+style = "red bold"
+
+# Améliorations du module directory
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+style = "blue bold"
+format = "[$path]($style)[$read_only]($read_only_style) "
+read_only = " 🔒"
+read_only_style = "red"
+
+[container]
+format = '[$name](blue dimmed) '
+
+[cmd_duration]
+min_time = 500  # Afficher seulement si la commande prend plus de 500ms
+format = "⏱️ [$duration]($style) "
+style = "yellow bold"
+show_milliseconds = true
+
+[time]
+disabled = false
+format = '🕙 [\[ $time \]]($style) '
+time_format = '%T'
+style = 'bold cyan'
+
+[hostname]
+ssh_only = false
+format = "[@$hostname]($style) "
+trim_at = "-"
+style = "bold dimmed green"
+disabled = false
+
+[username]
+show_always = true
+style_user = 'bold green'
+format = '[$user]($style) '
+
+[custom.separator]
+command = "echo '|'"
+style = "grey"
+format = "[$output]($style) "
+
+[git_branch]
+symbol = "🌱 "
+format = "[$symbol$branch]($style) "
+style = "purple bold"
+
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+style = "purple"
+conflicted = "🏳 "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+untracked = "?${count} "
+stashed = "📦 "
+modified = "!${count} "
+staged = "+${count} "
+renamed = "»${count} "
+deleted = "✘${count} "

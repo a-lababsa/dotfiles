@@ -1,0 +1,32 @@
+[
+  {
+    "context": "Editor",
+    "bindings": {
+      // Navigation
+      "cmd-shift-o": "file_finder::Toggle",
+      "cmd-t": "workspace::NewFile",
+      "cmd-shift-t": "pane::ReopenClosedItem",
+
+      // Search
+      "cmd-f": "buffer_search::Deploy",
+
+      // Git
+      "cmd-shift-g": "project_panel::ToggleFocus",
+
+      // Terminal
+      "cmd-`": "terminal_panel::ToggleFocus",
+
+      // Multi-cursor
+      "cmd-d": "editor::SelectNext",
+      "cmd-shift-d": "editor::SelectPrevious",
+      "cmd-alt-down": "editor::AddSelectionBelow",
+      "cmd-alt-up": "editor::AddSelectionAbove"
+    }
+  },
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "cmd-shift-g": "project_panel::ToggleFocus"
+    }
+  }
+]

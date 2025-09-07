@@ -1,0 +1,129 @@
+% development, productivity
+
+# Initialize new Node.js project
+dev-setup init <project_name> node
+
+# Initialize new Python project
+dev-setup init <project_name> python
+
+# Initialize new Rust project
+dev-setup init <project_name> rust
+
+# Initialize new Go project
+dev-setup init <project_name> go
+
+# Run health check on dotfiles
+health-check
+
+# Quick health check
+health-check quick
+
+# Create backup of dotfiles
+backup-dots create
+
+# Create named backup
+backup-dots create <backup_name>
+
+# Restore from backup
+backup-dots restore <backup_name>
+
+# List available backups
+backup-dots list
+
+# Show backup details
+backup-dots show <backup_name>
+
+# Delete backup
+backup-dots delete <backup_name>
+
+# Initialize secrets management
+scripts/secrets_manager.sh init
+
+# Link secrets to config
+scripts/secrets_manager.sh link
+
+# Add new secret
+scripts/secrets_manager.sh add <secret_name>
+
+# List secrets
+scripts/secrets_manager.sh list
+
+# Find files quickly with fd
+fd <pattern>
+
+# Find files by extension
+fd -e <extension>
+
+# Find files and execute command
+fd <pattern> -x <command>
+
+# Search in files with ripgrep
+rg <pattern>
+
+# Search with context lines
+rg -C <number> <pattern>
+
+# Search in specific file types
+rg -t <type> <pattern>
+
+# Interactive search with fzf
+fzf
+
+# Preview files while searching
+fzf --preview 'bat --color=always {}'
+
+# Search command history
+history | fzf
+
+# Git interactive branch selection
+git branch | fzf | xargs git checkout
+
+# Fuzzy find and edit file
+nvim $(fzf)
+
+# Directory navigation with zoxide
+z <directory>
+
+# Interactive directory selection
+zi
+
+# Benchmark command performance
+hyperfine '<command1>' '<command2>'
+
+# View file with syntax highlighting
+bat <file>
+
+# List directory with icons
+eza --icons
+
+# Tree view with eza
+eza --tree
+
+# Disk usage analysis
+dust
+
+# Better top with btop
+btop
+
+# Git UI with lazygit
+lazygit
+
+# View markdown file
+glow <file>
+
+# Interactive git diff
+delta
+
+# Process manager
+just
+
+$ project_name: echo "my-project"
+$ backup_name: backup-dots list | tail -n +2 | cut -d' ' -f1
+$ secret_name: echo "api-key"
+$ pattern: echo "TODO"
+$ extension: echo "js"
+$ command: echo "echo"
+$ number: echo "3"
+$ type: echo "js"
+$ directory: echo "workspace"
+$ file: find . -type f -name "*" | head -20

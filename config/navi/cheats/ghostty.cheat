@@ -1,0 +1,165 @@
+% ghostty, raccourcis, fenêtre, gestion
+# Nouvelle fenêtre
+CMD + N
+
+# Fermer la fenêtre
+CMD + SHIFT + W
+
+# Fermer toutes les fenêtres
+CMD + SHIFT + ALT + W
+
+# Basculer en plein écran
+CMD + Enter
+
+# Basculer en plein écran (alternatif)
+CMD + CTRL + F
+
+# Quitter l'application
+CMD + Q
+
+% ghostty, raccourcis, onglets, navigation
+# Nouvel onglet
+CMD + T
+
+# Fermer l'onglet/surface
+CMD + W
+
+# Onglet précédent
+CMD + SHIFT + [
+
+# Onglet suivant
+CMD + SHIFT + ]
+
+# Aller à l'onglet 1-8
+CMD + [1-8]
+
+# Aller au dernier onglet
+CMD + 9
+
+% ghostty, raccourcis, splits, panneaux
+# Nouveau split (droite)
+CMD + D
+
+# Nouveau split (bas)
+CMD + SHIFT + D
+
+# Focus split précédent
+CMD + [
+
+# Focus split suivant
+CMD + ]
+
+# Focus split haut
+CMD + ALT + ↑
+
+# Focus split bas
+CMD + ALT + ↓
+
+# Focus split gauche
+CMD + ALT + ←
+
+# Focus split droite
+CMD + ALT + →
+
+# Basculer zoom du split
+CMD + SHIFT + Enter
+
+# Redimensionner split haut
+CMD + CTRL + ↑
+
+# Redimensionner split bas
+CMD + CTRL + ↓
+
+# Redimensionner split gauche
+CMD + CTRL + ←
+
+# Redimensionner split droite
+CMD + CTRL + →
+
+# Égaliser tous les splits
+CMD + CTRL + =
+
+% ghostty, raccourcis, copier, coller
+# Copier
+CMD + C
+
+# Coller
+CMD + V
+
+% ghostty, raccourcis, défilement, navigation
+# Défiler vers le haut (début)
+CMD + Home
+
+# Défiler vers le bas (fin)
+CMD + End
+
+# Défiler page vers le haut
+CMD + Page Up
+
+# Défiler page vers le bas
+CMD + Page Down
+
+# Aller au prompt précédent
+CMD + ↑
+
+# Aller au prompt suivant
+CMD + ↓
+
+# Effacer l'écran
+CMD + K
+
+% ghostty, raccourcis, police, zoom
+# Augmenter la taille de police
+CMD + +
+
+# Augmenter la taille de police (alternatif)
+CMD + =
+
+# Diminuer la taille de police
+CMD + -
+
+# Réinitialiser la taille de police
+CMD + 0
+
+% ghostty, raccourcis, configuration, settings
+# Ouvrir la configuration
+CMD + ,
+
+# Recharger la configuration
+CMD + SHIFT + ,
+
+% ghostty, raccourcis, debug, inspection
+# Basculer l'inspecteur
+CMD + ALT + I
+
+% ghostty, raccourcis, export, sauvegarde
+# Écrire scrollback vers fichier (coller)
+CMD + SHIFT + J
+
+# Écrire scrollback vers fichier (ouvrir)
+CMD + SHIFT + ALT + J
+
+% ghostty, raccourcis, quick-terminal, global
+# Basculer terminal rapide (global)
+CMD + `
+
+# Note: Nécessite la configuration suivante dans config :
+# keybind = global:cmd+grave_accent=toggle_quick_terminal
+
+% ghostty, raccourcis, personnalisés, exemples
+# Exemple: Lier CTRL+B pour aller au dossier backup
+# ghostty shortcut bind Ctrl+B "cd /home/user/backups"
+
+# Exemple: Recherche dans terminal (workaround)
+# CTRL + F (ouvre TextEdit avec contenu du terminal)
+
+% ghostty, configuration, quick-terminal, setup
+# Configuration Quick Terminal dans ~/.config/ghostty/config
+# keybind = global:cmd+grave_accent=toggle_quick_terminal
+# quick-terminal-position = top
+# quick-terminal-screen = main
+# quick-terminal-animation-duration = 200
+
+# Permissions nécessaires sur macOS:
+# Système > Confidentialité et sécurité > Accessibilité
+# Ajouter Ghostty.app

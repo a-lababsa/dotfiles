@@ -1,0 +1,69 @@
+% macOS, raccourcis, fenêtres, bureaux
+# Basculer entre les applications
+CMD + Tab
+
+# Masquer l'application active
+CMD + H
+
+# Masquer toutes les applications sauf l'active
+CMD + ALT + H
+
+# Réduire la fenêtre active
+CMD + M
+
+# Réduire toutes les fenêtres de l'application
+CMD + ALT + M
+
+# Aller à l'espace de travail suivant
+CTRL + →
+
+# Aller à l'espace de travail précédent
+CTRL + ←
+
+% macOS, raccourcis, capture, screenshot
+# Capture d'écran plein écran
+SHIFT + CMD + 3
+
+# Capture d'écran d'une zone sélectionnée
+SHIFT + CMD + 4
+
+# Menu de capture d'écran avancé
+SHIFT + CMD + 5
+
+% macOS, raccourcis, finder, navigation
+# Ouvrir une nouvelle fenêtre Finder
+CMD + N
+
+# Aller au dossier parent
+CMD + ↑
+
+# Entrer dans le dossier sélectionné
+CMD + ↓
+
+# Afficher/masquer les fichiers cachés
+CMD + SHIFT + .
+
+# Recherche Spotlight
+CMD + Espace
+
+% macOS, raccourcis, texte, édition
+# Copier
+CMD + C
+
+# Coller
+CMD + V
+
+# Couper
+CMD + X
+
+# Annuler
+CMD + Z
+
+# Refaire
+CMD + SHIFT + Z
+
+# Sélectionner tout
+CMD + A
+
+# Rechercher
+CMD + F
