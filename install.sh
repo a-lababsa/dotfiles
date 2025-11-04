@@ -104,6 +104,13 @@ install_starship() {
 # Zsh setup
 setup_zsh() {
     print_status "Configuring Zsh..."
+
+    # Create Zsh history directory (XDG compliance)
+    if [[ ! -d "$HOME/.local/state/zsh" ]]; then
+        print_status "Creating Zsh history directory..."
+        run_cmd "mkdir -p $HOME/.local/state/zsh"
+    fi
+
     if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
         print_status "Installing Oh My Zsh..."
         run_cmd 'sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended'
