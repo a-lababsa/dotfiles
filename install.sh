@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-# Load configuration
-if [[ -f "install.conf" ]]; then
-    source install.conf
-fi
+# Source configuration and utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/install.conf"
+source "$SCRIPT_DIR/scripts/lib/utils.sh"
 
 # Error trap
 trap 'print_error "❌ Failed at line $LINENO. See install.log for details."' ERR
@@ -30,11 +30,6 @@ fi
 
 # Logging
 exec > >(tee -a install.log) 2>&1
-
-# Source configuration and utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/install.conf"
-source "$SCRIPT_DIR/scripts/lib/utils.sh"
 
 
 # OS Detection

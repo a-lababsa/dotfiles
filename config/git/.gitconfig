@@ -1,5 +1,6 @@
 [user]
-	name = alexandre lababsa
+	name = Alexandre Lababsa
+	email = alexandre@lababsa.fr
 [alias]
     # Basic shortcuts
     st = status
