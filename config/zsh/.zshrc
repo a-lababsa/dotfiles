@@ -48,29 +48,47 @@ fi
 if command -v zoxide &> /dev/null; then
     eval "$(zoxide init zsh)"
 fi
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=($HOME/.docker/completions $fpath)
+# Docker CLI completions (cross-platform)
+if [[ -d "$HOME/.docker/completions" ]]; then
+    fpath=($HOME/.docker/completions $fpath)
+fi
 autoload -Uz compinit
 compinit
-# End of Docker CLI completions
 
 # Zsh plugins (must be after compinit, syntax-highlighting must be last)
-if [[ -d "$(brew --prefix 2>/dev/null)/share/zsh-autosuggestions" ]]; then
-    source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-fi
-if [[ -d "$(brew --prefix 2>/dev/null)/share/zsh-syntax-highlighting" ]]; then
-    source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
+# Try: Homebrew (macOS) → /usr/share (apt) → Oh My Zsh custom plugins
+_load_zsh_plugin() {
+    local plugin_name="$1"
+    local plugin_file="$plugin_name.zsh"
 
-# Ollama optimizations for M4 Pro (24GB)
-export OLLAMA_NUM_CTX=32768
-export OLLAMA_KEEP_ALIVE=5m
-export OLLAMA_NUM_PARALLEL=1
-export OLLAMA_MAX_LOADED_MODELS=1
+    # Homebrew (macOS)
+    if [[ -d "$(brew --prefix 2>/dev/null)/share/$plugin_name" ]]; then
+        source "$(brew --prefix)/share/$plugin_name/$plugin_file"
+    # APT (Ubuntu/Debian)
+    elif [[ -f "/usr/share/$plugin_name/$plugin_file" ]]; then
+        source "/usr/share/$plugin_name/$plugin_file"
+    # Oh My Zsh custom plugins
+    elif [[ -f "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$plugin_name/$plugin_file" ]]; then
+        source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$plugin_name/$plugin_file"
+    fi
+}
 
-# Sherpa-ONNX TTS
-export SHERPA_ONNX_RUNTIME_DIR="$HOME/Library/Python/3.9/lib/python/site-packages/sherpa_onnx"
-export SHERPA_ONNX_MODEL_DIR="$HOME/.local/share/sherpa-onnx/models/vits-piper-en_US-lessac-medium"
+_load_zsh_plugin "zsh-autosuggestions"
+_load_zsh_plugin "zsh-syntax-highlighting"
+unset -f _load_zsh_plugin
+
+# macOS-specific configurations
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # Ollama optimizations for Apple Silicon
+    export OLLAMA_NUM_CTX=32768
+    export OLLAMA_KEEP_ALIVE=5m
+    export OLLAMA_NUM_PARALLEL=1
+    export OLLAMA_MAX_LOADED_MODELS=1
+
+    # Sherpa-ONNX TTS
+    export SHERPA_ONNX_RUNTIME_DIR="$HOME/Library/Python/3.9/lib/python/site-packages/sherpa_onnx"
+    export SHERPA_ONNX_MODEL_DIR="$HOME/.local/share/sherpa-onnx/models/vits-piper-en_US-lessac-medium"
+fi
 
 # YouTube summary via fabric
 ytsummary() {

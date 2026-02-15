@@ -25,3 +25,10 @@ git-delta
 direnv
 hyperfine
 zoxide
+gh
+vim
+wget
+eza
+just
+zsh-autosuggestions
+zsh-syntax-highlighting

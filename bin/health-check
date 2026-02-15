@@ -9,12 +9,12 @@ source "$SCRIPT_DIR/../scripts/lib/utils.sh"
 # Configuration
 REQUIRED_TOOLS=(
     "git"
-    "zsh" 
+    "zsh"
     "starship"
     "fzf"
-    "fd"
+    "fd:fdfind"
     "ripgrep"
-    "bat"
+    "bat:batcat"
     "eza"
 )
 
@@ -64,11 +64,20 @@ check() {
     fi
 }
 
-# Check if command exists
+# Check if command exists (supports "name:fallback" format for Ubuntu aliases)
 check_command() {
-    local cmd="$1"
+    local entry="$1"
     local critical="${2:-false}"
-    check "$cmd" "command -v $cmd" "$critical"
+    local cmd="${entry%%:*}"
+    local fallback="${entry#*:}"
+
+    if [[ "$fallback" == "$cmd" ]]; then
+        # No fallback specified
+        check "$cmd" "command -v $cmd" "$critical"
+    else
+        # Try primary command, then fallback
+        check "$cmd" "command -v $cmd || command -v $fallback" "$critical"
+    fi
 }
 
 # Check file exists
@@ -252,10 +261,12 @@ quick_check() {
     
     print_status "🚀 Quick health check..."
     
-    # Check only critical tools
-    for tool in "${REQUIRED_TOOLS[@]}"; do
-        if ! command -v "$tool" &>/dev/null; then
-            print_error "$tool is not installed"
+    # Check only critical tools (supports "name:fallback" format)
+    for entry in "${REQUIRED_TOOLS[@]}"; do
+        local cmd="${entry%%:*}"
+        local fallback="${entry#*:}"
+        if ! command -v "$cmd" &>/dev/null && ! command -v "$fallback" &>/dev/null; then
+            print_error "$cmd is not installed"
             ((critical_failed++))
         fi
     done
