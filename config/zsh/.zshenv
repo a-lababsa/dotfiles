@@ -46,5 +46,8 @@ export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 export PATH="$CARGO_HOME/bin:$PATH"
 
+# Ollama
+export OLLAMA_HOST="http://localhost:11434"
+
 # dotfiles location
 export DOTFILES="$HOME/Documents/dotfiles"
