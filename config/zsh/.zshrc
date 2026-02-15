@@ -54,6 +54,14 @@ autoload -Uz compinit
 compinit
 # End of Docker CLI completions
 
+# Zsh plugins (must be after compinit, syntax-highlighting must be last)
+if [[ -d "$(brew --prefix 2>/dev/null)/share/zsh-autosuggestions" ]]; then
+    source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
+if [[ -d "$(brew --prefix 2>/dev/null)/share/zsh-syntax-highlighting" ]]; then
+    source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
 # Ollama optimizations for M4 Pro (24GB)
 export OLLAMA_NUM_CTX=32768
 export OLLAMA_KEEP_ALIVE=5m

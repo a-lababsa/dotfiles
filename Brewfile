@@ -33,6 +33,8 @@ brew "vim"
 brew "wget"
 brew "zoxide"              # Smart cd replacement
 brew "zsh"
+brew "zsh-autosuggestions"       # Fish-like inline suggestions
+brew "zsh-syntax-highlighting"   # Command syntax coloring
 
 # Applications
 cask "betterdisplay"
