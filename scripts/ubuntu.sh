@@ -137,6 +137,7 @@ install_github_binary "dust" "bootandy/dust" "unknown-linux-gnu.*tar\.gz" "dust"
 install_github_binary "glow" "charmbracelet/glow" "linux.*tar\.gz" "glow"
 install_github_binary "topgrade" "topgrade-rs/topgrade" "linux.*tar\.gz" "topgrade"
 install_github_binary "xh" "ducaale/xh" "linux.*tar\.gz" "xh"
+install_github_binary "vibecheck" "rshdhere/vibecheck" "Linux.*tar\.gz" "vibecheck"
 
 # Install navi (interactive cheatsheet tool)
 if ! command -v navi >/dev/null 2>&1; then

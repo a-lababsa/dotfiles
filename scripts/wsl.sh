@@ -2,6 +2,13 @@
 
 # WSL-specific configuration
 
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/utils.sh"
+
+# Run Ubuntu setup first (WSL runs on Ubuntu/Debian)
+source "$SCRIPT_DIR/ubuntu.sh"
+
 print_status "Applying WSL configurations..."
 
 # Configure WSL for Windows
