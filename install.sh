@@ -136,16 +136,16 @@ install_nvm() {
         # Wait a moment for NVM to be available
         sleep 1
         
-        print_status "Installing Node.js LTS..."
+        NODE_VERSION="${NODE_VERSION:-lts/*}"
+
+        print_status "Installing Node.js LTS ($NODE_VERSION)..."
         if command -v nvm &> /dev/null; then
-            # Install LTS version
             run_cmd "nvm install $NODE_VERSION"
             run_cmd "nvm use $NODE_VERSION"
-            
-            # Get the current version and set as default to avoid lts/* alias bug
+
+            # Fix alias bug en utilisant le numéro de version réel
             CURRENT_VERSION=$(nvm current)
             if [ -n "$CURRENT_VERSION" ] && [ "$CURRENT_VERSION" != "system" ]; then
-                # Use the specific version number instead of lts/* alias
                 run_cmd "nvm alias default $CURRENT_VERSION"
             else
                 print_error "Failed to get current Node version for default alias"
