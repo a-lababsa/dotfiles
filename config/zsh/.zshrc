@@ -56,7 +56,7 @@ autoload -Uz compinit
 compinit
 
 # Zsh plugins (must be after compinit, syntax-highlighting must be last)
-# Try: Homebrew (macOS) → /usr/share (apt) → Oh My Zsh custom plugins
+# Try: Homebrew (macOS) → /usr/share (apt) → ~/.local/share/zsh/plugins (XDG)
 _load_zsh_plugin() {
     local plugin_name="$1"
     local plugin_file="$plugin_name.zsh"
@@ -67,9 +67,9 @@ _load_zsh_plugin() {
     # APT (Ubuntu/Debian)
     elif [[ -f "/usr/share/$plugin_name/$plugin_file" ]]; then
         source "/usr/share/$plugin_name/$plugin_file"
-    # Oh My Zsh custom plugins
-    elif [[ -f "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$plugin_name/$plugin_file" ]]; then
-        source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$plugin_name/$plugin_file"
+    # XDG local plugins (installed by ubuntu.sh / wsl.sh)
+    elif [[ -f "$HOME/.local/share/zsh/plugins/$plugin_name/$plugin_file" ]]; then
+        source "$HOME/.local/share/zsh/plugins/$plugin_name/$plugin_file"
     fi
 }
 

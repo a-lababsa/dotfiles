@@ -101,15 +101,11 @@ setup_zsh() {
     print_status "Configuring Zsh..."
 
     # Create Zsh history directory (XDG compliance)
-    if [[ ! -d "$HOME/.local/state/zsh" ]]; then
-        print_status "Creating Zsh history directory..."
-        run_cmd "mkdir -p $HOME/.local/state/zsh"
-    fi
+    run_cmd "mkdir -p $HOME/.local/state/zsh"
 
-    if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-        print_status "Installing Oh My Zsh..."
-        run_cmd 'sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended'
-    fi
+    # Create plugin directory (XDG compliant, no Oh My Zsh required)
+    run_cmd "mkdir -p $HOME/.local/share/zsh/plugins"
+
     if [[ "$SHELL" != *"zsh" ]]; then
         print_status "Setting Zsh as default shell..."
         run_cmd "chsh -s $(which zsh)"

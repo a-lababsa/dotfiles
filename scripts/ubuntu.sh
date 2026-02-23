@@ -66,11 +66,11 @@ else
     print_status "navi is already installed"
 fi
 
-# Install Zsh plugins via Oh My Zsh custom directory
+# Install Zsh plugins into XDG-compliant directory
 install_zsh_plugin() {
     local name="$1"
     local repo="$2"
-    local dest="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$name"
+    local dest="$HOME/.local/share/zsh/plugins/$name"
 
     if [[ -d "$dest" ]]; then
         print_status "Zsh plugin $name already installed"
@@ -83,6 +83,7 @@ install_zsh_plugin() {
         return 0
     fi
 
+    mkdir -p "$HOME/.local/share/zsh/plugins"
     print_status "Installing Zsh plugin: $name..."
     git clone --depth 1 "https://github.com/$repo" "$dest" 2>/dev/null
     print_status "Zsh plugin $name installed"

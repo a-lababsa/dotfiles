@@ -41,9 +41,10 @@ install_github_binary "vibecheck" "rshdhere/vibecheck"        "Linux.*tar\.gz"  
 install_zsh_plugin() {
     local name="$1"
     local repo="$2"
-    local dest="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$name"
+    local dest="$HOME/.local/share/zsh/plugins/$name"
     [[ -d "$dest" ]] && { print_status "Zsh plugin $name already installed"; return 0; }
     [[ -f "/usr/share/$name/$name.zsh" ]] && { print_status "Zsh plugin $name available via system package"; return 0; }
+    mkdir -p "$HOME/.local/share/zsh/plugins"
     print_status "Installing Zsh plugin: $name..."
     git clone --depth 1 "https://github.com/$repo" "$dest" 2>/dev/null
     print_status "Zsh plugin $name installed"
