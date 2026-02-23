@@ -30,6 +30,11 @@ OPTIONAL_TOOLS=(
     "dust"
     "hyperfine"
     "just"
+    "vibecheck"
+    "ollama"
+    "navi"
+    "serpl"
+    "xh"
 )
 
 # Health check results (using arrays for compatibility)

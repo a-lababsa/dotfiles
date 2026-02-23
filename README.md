@@ -2,6 +2,11 @@
 
 Cross-platform development environment for macOS, Ubuntu, Debian and WSL2.
 
+## Prerequisites
+
+- **macOS** — Homebrew (installed automatically), `curl`, `git`
+- **Ubuntu/Debian/WSL2** — `curl`, `git`, `sudo` access
+
 ## Installation
 
 ```bash
@@ -28,39 +33,114 @@ cd ~/Documents/dotfiles
 **Terminal:** Ghostty
 **Languages:** Node.js (NVM), Python (uv)
 
-## Key Aliases
+## Aliases & Functions
 
+### Navigation
 ```bash
-# Navigation
-..        # cd ..
-z <dir>   # jump to directory (zoxide)
+..               # cd ..
+...              # cd ../..
+dev              # cd ~/workspace
+docs             # cd ~/Documents
+z <dir>          # smart jump (zoxide)
+```
 
-# Git
-gs        # git status
-ga        # git add
-gc        # git commit
-gp        # git push
-gl        # git log --oneline --graph
-vc        # AI commit message (vibecheck + Ollama)
+### Files & search
+```bash
+cat              # bat (syntax highlighting)
+ls / ll / l      # eza (with git status)
+tree             # eza --tree
+find             # fd
+grep             # rg (ripgrep)
+man              # tldr
+```
 
-# Modern replacements
-cat       # bat (syntax highlighting)
-ls / ll   # eza (with git status)
-find      # fd
-grep      # rg (ripgrep)
-man       # tldr
+### Git
+```bash
+gs               # git status
+ga               # git add
+gc               # git commit
+gp               # git push
+gl               # git log --oneline --graph --decorate
+gcm              # git checkout main
+gcd              # git checkout develop
+vc               # AI commit message (vibecheck + Ollama)
+git-fix-email <old> <new>  # rewrite author/committer email across history
+```
+
+### Docker
+```bash
+dps              # docker ps
+dimg             # docker images
+dc               # docker-compose
+```
+
+### Development
+```bash
+py               # python3
+pip              # pip3
+serve            # python3 -m http.server
+nrun             # npm run
+npmls            # npm list -g --depth=0
+```
+
+### System
+```bash
+update           # brew upgrade (macOS) / apt upgrade (Linux)
+cleanup          # brew cleanup (macOS) / apt autoremove (Linux)
+ports            # list listening ports
+reload           # source ~/.zshrc
+path             # print PATH entries one per line
+```
+
+### Functions
+```bash
+# Requires: yt-dlp + fabric (not installed by this repo)
+ytsummary <url> [pattern]  # summarize a YouTube video via fabric (default: summarize)
+```
+
+### Shell shortcuts
+```bash
+Ctrl+R           # fuzzy history search (fzf)
+Ctrl+T           # fuzzy file search (fzf)
+```
+
+### WSL only
+```bash
+explorer / notepad / clip / pwsh / cmd
 ```
 
 ## AI Commit Messages (vibecheck)
+
+Requires [Ollama](https://ollama.ai) running locally.
 
 ```bash
 git add .
 vc        # generates: feat(scope): description
 ```
 
-Uses Ollama locally (`gpt-oss:20b`). Format: `type(scope): description`.
+Format: `type(scope): description` — uses `gpt-oss:20b` via Ollama.
 
-**Prerequisites:** [Ollama](https://ollama.ai) installed and running.
+## Interactive Cheatsheets (navi)
+
+`navi` is an interactive cheatsheet tool with fuzzy search. Run it and type a few letters to filter available commands.
+
+```bash
+navi                  # open interactive UI
+navi --query docker   # filter by topic directly
+```
+
+Cheatsheets included in this repo (`config/navi/cheats/`):
+
+| File | Content |
+|---|---|
+| `development.cheat` | fd, rg, fzf, zoxide, bat, eza, lazygit, dev-setup, backup-dots |
+| `docker.cheat` | build, run, exec, logs, compose, prune — with live container/image autocomplete |
+| `ghostty.cheat` | all keyboard shortcuts (windows, tabs, splits, font…) |
+| `macos.cheat` | system shortcuts, Finder, screenshots |
+| `vscode.cheat` | navigation, editing, multi-cursor, debug, git |
+| `zed.cheat` | navigation, splits, AI, vim mode, git, settings |
+
+> Variables in commands (e.g. `<container_name>`) are filled dynamically by navi from the actual system state.
 
 ## Utilities
 
@@ -82,11 +162,12 @@ config/
   zed/          # editor settings + keymap
   vscode/       # editor settings
   navi/         # cheatsheets (docker, git, macos…)
+  private/      # local overrides, not tracked (use with secrets_manager.sh)
 scripts/
   macos.sh      # macOS system defaults
   ubuntu.sh     # GitHub releases installs + compat symlinks
-  wsl.sh        # WSL-specific config (sources ubuntu.sh)
-  lib/          # shared utils and colors
+  wsl.sh        # WSL-specific config
+  lib/          # shared utils, colors, install_github_binary
 bin/            # health-check, dev-setup, backup-dots, update-all
 Brewfile        # macOS packages (brew bundle)
 install.sh      # main entrypoint
