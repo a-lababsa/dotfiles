@@ -24,6 +24,7 @@ brew "navi"
 brew "neofetch"
 brew "neovim"
 brew "ripgrep"
+brew "serpl"               # Find & replace TUI (Rust)
 brew "starship"
 brew "tldr"
 brew "tmux"
@@ -32,6 +33,7 @@ brew "tree"
 brew "vibecheck"            # AI commit message generator
 brew "vim"
 brew "wget"
+brew "xh"                  # Fast HTTP client (httpie-compatible, Rust)
 brew "zoxide"              # Smart cd replacement
 brew "zsh"
 brew "zsh-autosuggestions"       # Fish-like inline suggestions
