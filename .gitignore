@@ -1,0 +1,19 @@
+# VS Code workspace
+./dotfiles.code-workspace
+
+# Installation logs and backups
+install.log
+./config-backup
+*.backup
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Local customizations
+local/
+
+# Private configurations (secrets, API keys, etc.)
+config/private/*
+!config/private/.gitkeep
+secrets/

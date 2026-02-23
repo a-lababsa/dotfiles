@@ -1,0 +1,534 @@
+#!/bin/bash
+# Development project setup automation
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/lib/utils.sh"
+
+# Default project structure
+DEFAULT_DIRS=(
+    "src"
+    "tests" 
+    "docs"
+    ".github/workflows"
+    "scripts"
+)
+
+# Initialize a new development project
+init_project() {
+    local project_name="$1"
+    local project_type="${2:-generic}"
+    
+    if [[ -z "$project_name" ]]; then
+        print_error "Usage: dev-setup <project-name> [type]"
+        print_status "Available types: node, python, rust, go, web"
+        exit 1
+    fi
+    
+    print_status "Setting up $project_type project: $project_name"
+    
+    # Create project directory
+    mkdir -p "$project_name"
+    cd "$project_name"
+    
+    # Create basic structure
+    for dir in "${DEFAULT_DIRS[@]}"; do
+        mkdir -p "$dir"
+        print_success "Created: $dir/"
+    done
+    
+    # Initialize git
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        git init
+        print_success "Initialized Git repository"
+    fi
+    
+    # Create basic files
+    create_readme "$project_name" "$project_type"
+    create_gitignore "$project_type"
+    create_github_workflow "$project_type"
+    
+    # Type-specific setup
+    case "$project_type" in
+        "node"|"js"|"typescript"|"ts")
+            setup_node_project
+            ;;
+        "python"|"py")
+            setup_python_project
+            ;;
+        "rust"|"rs")
+            setup_rust_project
+            ;;
+        "go")
+            setup_go_project
+            ;;
+        "web"|"html")
+            setup_web_project
+            ;;
+    esac
+    
+    print_success "Project $project_name initialized!"
+    print_status "Next steps:"
+    echo "  cd $project_name"
+    echo "  git add ."
+    echo "  git commit -m 'Initial commit'"
+}
+
+create_readme() {
+    local name="$1"
+    local type="$2"
+    
+    cat > README.md << EOF
+# $name
+
+## Description
+Brief description of your $type project.
+
+## Installation
+\`\`\`bash
+# Add installation instructions
+\`\`\`
+
+## Usage
+\`\`\`bash
+# Add usage examples
+\`\`\`
+
+## Development
+\`\`\`bash
+# Add development setup instructions
+\`\`\`
+
+## Testing
+\`\`\`bash
+# Add testing instructions
+\`\`\`
+
+## Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
+
+## License
+[Add your license here]
+EOF
+    print_success "Created: README.md"
+}
+
+create_gitignore() {
+    local type="$1"
+    
+    # Base .gitignore
+    cat > .gitignore << 'EOF'
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+node_modules/
+EOF
+
+    # Type-specific additions
+    case "$type" in
+        "node"|"js"|"typescript"|"ts")
+            cat >> .gitignore << 'EOF'
+
+# Node.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+.env
+.env.local
+EOF
+            ;;
+        "python"|"py")
+            cat >> .gitignore << 'EOF'
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+EOF
+            ;;
+        "rust"|"rs")
+            cat >> .gitignore << 'EOF'
+
+# Rust
+target/
+Cargo.lock
+EOF
+            ;;
+        "go")
+            cat >> .gitignore << 'EOF'
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+EOF
+            ;;
+    esac
+    
+    print_success "Created: .gitignore"
+}
+
+create_github_workflow() {
+    local type="$1"
+    
+    case "$type" in
+        "node"|"js"|"typescript"|"ts")
+            cat > .github/workflows/ci.yml << 'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+EOF
+            ;;
+        "python"|"py")
+            cat > .github/workflows/ci.yml << 'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11, 3.12]
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Test with pytest
+      run: pytest
+EOF
+            ;;
+    esac
+    
+    if [[ -f .github/workflows/ci.yml ]]; then
+        print_success "Created: .github/workflows/ci.yml"
+    fi
+}
+
+setup_node_project() {
+    print_status "Setting up Node.js project..."
+    
+    # Create package.json
+    cat > package.json << 'EOF'
+{
+  "name": "project-name",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest",
+    "lint": "eslint src/",
+    "format": "prettier --write src/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+EOF
+    
+    # Create basic source file
+    cat > src/index.js << 'EOF'
+console.log('Hello, World!');
+EOF
+    
+    # Create test file
+    mkdir -p tests
+    cat > tests/index.test.js << 'EOF'
+describe('Basic test', () => {
+  test('should pass', () => {
+    expect(true).toBe(true);
+  });
+});
+EOF
+    
+    print_success "Node.js project structure created"
+}
+
+setup_python_project() {
+    print_status "Setting up Python project..."
+    
+    # Create requirements files
+    touch requirements.txt
+    cat > requirements-dev.txt << 'EOF'
+pytest
+black
+flake8
+mypy
+EOF
+    
+    # Create basic source structure
+    mkdir -p src
+    cat > src/__init__.py << 'EOF'
+"""Package initialization."""
+__version__ = "0.1.0"
+EOF
+    
+    cat > src/main.py << 'EOF'
+"""Main module."""
+
+def main():
+    """Main function."""
+    print("Hello, World!")
+
+if __name__ == "__main__":
+    main()
+EOF
+    
+    # Create test file
+    cat > tests/test_main.py << 'EOF'
+"""Tests for main module."""
+import pytest
+from src.main import main
+
+def test_main():
+    """Test main function."""
+    # Add your tests here
+    assert True
+EOF
+    
+    # Create setup files
+    cat > pyproject.toml << 'EOF'
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "project-name"
+version = "0.1.0"
+description = ""
+authors = [{name = "Author Name", email = "author@example.com"}]
+dependencies = []
+
+[tool.black]
+line-length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+EOF
+    
+    print_success "Python project structure created"
+}
+
+setup_rust_project() {
+    print_status "Setting up Rust project..."
+    
+    if command_exists cargo; then
+        cargo init --name "$(basename "$PWD")" .
+        print_success "Rust project initialized with cargo"
+    else
+        print_warning "Cargo not found. Creating basic structure..."
+        
+        cat > Cargo.toml << 'EOF'
+[package]
+name = "project-name"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+EOF
+        
+        mkdir -p src
+        cat > src/main.rs << 'EOF'
+fn main() {
+    println!("Hello, world!");
+}
+EOF
+        
+        print_success "Basic Rust project structure created"
+    fi
+}
+
+setup_go_project() {
+    print_status "Setting up Go project..."
+    
+    if command_exists go; then
+        go mod init "$(basename "$PWD")"
+        print_success "Go module initialized"
+    fi
+    
+    cat > main.go << 'EOF'
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
+}
+EOF
+    
+    cat > main_test.go << 'EOF'
+package main
+
+import "testing"
+
+func TestMain(t *testing.T) {
+    // Add your tests here
+}
+EOF
+    
+    print_success "Go project structure created"
+}
+
+setup_web_project() {
+    print_status "Setting up Web project..."
+    
+    cat > index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Name</title>
+    <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+    <h1>Hello, World!</h1>
+    <script src="src/script.js"></script>
+</body>
+</html>
+EOF
+    
+    cat > src/style.css << 'EOF'
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 2rem;
+}
+EOF
+    
+    cat > src/script.js << 'EOF'
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded');
+});
+EOF
+    
+    print_success "Web project structure created"
+}
+
+# Main execution
+case "${1:-help}" in
+    "init"|"new")
+        init_project "${2:-}" "${3:-generic}"
+        ;;
+    "help"|"--help"|"-h")
+        echo "Development Project Setup Tool"
+        echo ""
+        echo "Usage: dev-setup <command> [options]"
+        echo ""
+        echo "Commands:"
+        echo "  init <name> [type]   Initialize new project"
+        echo "  help                 Show this help"
+        echo ""
+        echo "Project types:"
+        echo "  node, js, typescript, ts    Node.js/JavaScript project"
+        echo "  python, py                  Python project"
+        echo "  rust, rs                    Rust project"
+        echo "  go                          Go project"
+        echo "  web, html                   Web project"
+        echo "  generic                     Generic project (default)"
+        ;;
+    *)
+        print_error "Unknown command: $1"
+        print_status "Use 'dev-setup help' for usage information"
+        exit 1
+        ;;
+esac

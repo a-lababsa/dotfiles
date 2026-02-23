@@ -1,0 +1,194 @@
+{
+  // Editor settings
+  "theme": "Catppuccin Mocha",
+  "buffer_font_family": "JetBrains Mono",
+  "buffer_font_size": 14,
+  "buffer_font_features": {
+    "liga": true,
+    "calt": true
+  },
+  "ui_font_size": 14,
+  "tab_size": 2,
+  "indent_guides": {
+    "enabled": true,
+    "coloring": "indent_aware"
+  },
+  "soft_wrap": "editor_width",
+  "show_whitespaces": "selection",
+  "remove_trailing_whitespace_on_save": true,
+  "ensure_final_newline_on_save": true,
+  "show_inline_completions": true,
+  "relative_line_numbers": false,
+
+  // UI preferences
+  "show_completions_on_input": true,
+  "show_completion_documentation": true,
+  "use_on_type_format": true,
+  "format_on_save": "on",
+  "autosave": "on_focus_change",
+  "auto_update": true,
+  "vim_mode": false,
+  "cursor_blink": true,
+  "hover_popover_enabled": true,
+  "scrollbar": {
+    "show": "auto",
+    "git_diff": true,
+    "search_results": true
+  },
+
+  // File tree
+  "project_panel": {
+    "dock": "left",
+    "default_width": 280,
+    "file_icons": true,
+    "folder_icons": true,
+    "git_status": true,
+    "indent_size": 20
+  },
+  
+  // Outline panel
+  "outline_panel": {
+    "dock": "right",
+    "default_width": 200
+  },
+
+  // Terminal
+  "terminal": {
+    "shell": "system",
+    "dock": "bottom",
+    "default_height": 320,
+    "font_family": "JetBrains Mono",
+    "font_size": 13,
+    "working_directory": "current_project_directory",
+    "blinking": "terminal_controlled"
+  },
+  
+  // Collaboration
+  "collaboration_panel": {
+    "dock": "left"
+  },
+
+  // Git
+  "git": {
+    "inline_blame": {
+      "enabled": true
+    }
+  },
+
+  // Language servers
+  "lsp": {
+    "typescript-language-server": {
+      "initialization_options": {
+        "preferences": {
+          "includeInlayParameterNameHints": "all",
+          "includeInlayVariableTypeHints": true,
+          "includeInlayFunctionParameterTypeHints": true,
+          "includeInlayPropertyDeclarationTypeHints": true
+        }
+      }
+    },
+    "rust-analyzer": {
+      "initialization_options": {
+        "check": {
+          "command": "clippy"
+        },
+        "inlayHints": {
+          "bindingModeHints": {
+            "enable": false
+          },
+          "chainingHints": {
+            "enable": true
+          },
+          "closingBraceHints": {
+            "enable": true,
+            "minLines": 25
+          },
+          "closureReturnTypeHints": {
+            "enable": "never"
+          },
+          "lifetimeElisionHints": {
+            "enable": "never",
+            "useParameterNames": false
+          },
+          "maxLength": 25,
+          "parameterHints": {
+            "enable": true
+          },
+          "reborrowHints": {
+            "enable": "never"
+          },
+          "renderColons": true,
+          "typeHints": {
+            "enable": true,
+            "hideClosureInitialization": false,
+            "hideNamedConstructor": false
+          }
+        }
+      }
+    }
+  },
+
+  // Language specific
+  "languages": {
+    "JavaScript": {
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      },
+      "formatter": "prettier",
+      "tab_size": 2
+    },
+    "TypeScript": {
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      },
+      "formatter": "prettier",
+      "tab_size": 2
+    },
+    "JSON": {
+      "formatter": "prettier",
+      "tab_size": 2
+    },
+    "Rust": {
+      "formatter": "language_server",
+      "tab_size": 4
+    },
+    "Python": {
+      "formatter": "ruff",
+      "tab_size": 4
+    },
+    "Go": {
+      "formatter": "gofmt",
+      "tab_size": 4,
+      "hard_tabs": true
+    },
+    "Markdown": {
+      "formatter": "prettier",
+      "tab_size": 2,
+      "soft_wrap": "preferred_line_length"
+    },
+    "YAML": {
+      "formatter": "prettier",
+      "tab_size": 2
+    }
+  },
+  
+  // Features
+  "features": {
+    "inline_completion_provider": "copilot"
+  },
+  
+  // Telemetry
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  
+  // Assistant
+  "assistant": {
+    "default_model": {
+      "provider": "anthropic",
+      "model": "claude-3-5-sonnet-20241022"
+    },
+    "version": "2"
+  }
+}

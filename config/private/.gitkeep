@@ -1,0 +1,2 @@
+# This directory contains private configurations that should not be versioned
+# Add your sensitive configs here and they will be ignored by git

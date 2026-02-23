@@ -1,0 +1,77 @@
+% docker
+
+# Build Docker image
+docker build -t <image_name> .
+
+# Build Docker image with specific Dockerfile
+docker build -t <image_name> -f <dockerfile_path> .
+
+# Run Docker container
+docker run -it --rm <image_name>
+
+# Run Docker container with port mapping
+docker run -it --rm -p <host_port>:<container_port> <image_name>
+
+# Run Docker container with volume mount
+docker run -it --rm -v <host_path>:<container_path> <image_name>
+
+# Run Docker container in background
+docker run -d --name <container_name> <image_name>
+
+# List running containers
+docker ps
+
+# List all containers
+docker ps -a
+
+# Stop container
+docker stop <container_name>
+
+# Remove container
+docker rm <container_name>
+
+# Remove image
+docker rmi <image_name>
+
+# View container logs
+docker logs <container_name>
+
+# Execute command in running container
+docker exec -it <container_name> <command>
+
+# Open shell in running container
+docker exec -it <container_name> /bin/bash
+
+# Copy file from container to host
+docker cp <container_name>:<container_path> <host_path>
+
+# Copy file from host to container
+docker cp <host_path> <container_name>:<container_path>
+
+# Docker Compose up
+docker-compose up
+
+# Docker Compose up in background
+docker-compose up -d
+
+# Docker Compose down
+docker-compose down
+
+# Docker Compose build
+docker-compose build
+
+# Docker system cleanup
+docker system prune -a
+
+# Remove unused volumes
+docker volume prune
+
+# Remove unused networks
+docker network prune
+
+# Show Docker disk usage
+docker system df
+
+$ image_name: docker images --format "table {{.Repository}}:{{.Tag}}" | tail -n +2
+$ container_name: docker ps --format "table {{.Names}}" | tail -n +2
+$ dockerfile_path: find . -name "*Dockerfile*" -type f

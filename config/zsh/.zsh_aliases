@@ -1,0 +1,103 @@
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+
+# Modern CLI replacements (with fallbacks for compatibility)
+if command -v bat >/dev/null 2>&1; then
+    alias cat='bat'                    # Syntax highlighting
+elif command -v batcat >/dev/null 2>&1; then
+    alias cat='batcat'                 # Ubuntu/Debian uses batcat
+else
+    alias cat='command cat'            # Fallback to original cat
+fi
+
+if command -v eza >/dev/null 2>&1; then
+    alias ls='eza'                     # Modern ls with Git status
+    alias ll='eza -la --git'           # Detailed list with Git info
+    alias l='eza -la --git --header'   # With header
+    alias tree='eza --tree'            # Tree view
+elif command -v exa >/dev/null 2>&1; then
+    alias ls='exa'                     # Fallback to exa if available
+    alias ll='exa -la --git'
+    alias l='exa -la --git --header'
+    alias tree='exa --tree'
+fi
+
+if command -v fd >/dev/null 2>&1; then
+    alias find='fd'                    # Fast find alternative
+fi
+
+if command -v rg >/dev/null 2>&1; then
+    alias grep='rg'                    # Ripgrep for fast search
+fi
+
+if command -v tldr >/dev/null 2>&1; then
+    alias man='tldr'                   # Concise documentation
+fi
+
+# System (OS-specific update commands)
+case "$(uname -s)" in
+    Darwin)
+        alias update='brew update && brew upgrade'
+        alias cleanup='brew cleanup && brew autoremove'
+        ;;
+    Linux)
+        if command -v apt >/dev/null 2>&1; then
+            alias update='sudo apt update && sudo apt upgrade -y'
+            alias cleanup='sudo apt autoremove -y && sudo apt clean'
+        elif command -v yum >/dev/null 2>&1; then
+            alias update='sudo yum update -y'
+            alias cleanup='sudo yum autoremove -y'
+        elif command -v pacman >/dev/null 2>&1; then
+            alias update='sudo pacman -Syu'
+            alias cleanup='sudo pacman -Rns $(pacman -Qtdq) 2>/dev/null || true'
+        fi
+        ;;
+esac
+
+alias ports='sudo lsof -i -P -n | grep LISTEN'
+
+# Git shortcuts
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline --graph --decorate'
+alias gcm='git checkout main'
+alias gcd='git checkout develop'
+
+# Docker
+alias dps='docker ps'
+alias dimg='docker images'
+alias dc='docker-compose'
+
+# Development
+alias py='python3'
+alias pip='pip3'
+alias npmls='npm list -g --depth=0'
+alias nrun='npm run'
+alias serve='python3 -m http.server'
+
+# WSL specific (only load on WSL)
+if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -q Microsoft /proc/version 2>/dev/null; then
+    alias explorer='explorer.exe'
+    alias clip='clip.exe'
+    alias notepad='notepad.exe'
+    alias cmd='cmd.exe /c'
+    alias pwsh='powershell.exe'
+fi
+
+# Directory shortcuts
+alias dev='cd ~/workspace'
+alias docs='cd ~/Documents'
+
+# Fallbacks for compatibility
+alias oldcat='command cat'         # Original cat command
+alias oldls='command ls'           # Original ls command
+alias oldfind='command find'       # Original find command
+alias oldgrep='command grep'       # Original grep command
+alias oldman='command man'         # Original man command
+
+# Utility shortcuts
+alias reload='source ~/.zshrc'     # Reload shell config
+alias path='echo -e ${PATH//:/\\n}' # Display PATH nicely

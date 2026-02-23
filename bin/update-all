@@ -1,0 +1,340 @@
+#!/bin/bash
+# Universal update script for all package managers and tools
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../scripts/lib/utils.sh"
+
+# Configuration
+TEMP_LOG=$(mktemp)
+ERRORS=()
+UPDATED_TOOLS=()
+
+# Cleanup function
+cleanup() {
+    rm -f "$TEMP_LOG"
+}
+trap cleanup EXIT
+
+# Log and execute update command
+update_tool() {
+    local tool_name="$1"
+    local update_cmd="$2"
+    local check_cmd="${3:-}"
+    
+    print_status "Updating $tool_name..."
+    
+    # Check if tool is available
+    if [[ -n "$check_cmd" ]] && ! eval "$check_cmd" &>/dev/null; then
+        print_warning "$tool_name not installed, skipping"
+        return 0
+    fi
+    
+    # Execute update command
+    if eval "$update_cmd" > "$TEMP_LOG" 2>&1; then
+        print_success "$tool_name updated successfully"
+        UPDATED_TOOLS+=("$tool_name")
+        
+        # Show summary if verbose
+        if [[ "${VERBOSE:-false}" == "true" ]]; then
+            tail -5 "$TEMP_LOG" | sed 's/^/  /'
+        fi
+    else
+        print_error "$tool_name update failed"
+        ERRORS+=("$tool_name: $(tail -1 "$TEMP_LOG")")
+        
+        # Show error details
+        echo "Error details:"
+        tail -3 "$TEMP_LOG" | sed 's/^/  /'
+    fi
+    
+    echo
+}
+
+# macOS updates
+update_macos() {
+    if [[ "$OS" != "macos" ]]; then
+        return 0
+    fi
+    
+    print_status "📱 macOS Updates"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # Homebrew
+    update_tool "Homebrew" "brew update && brew upgrade" "command -v brew"
+    update_tool "Homebrew Casks" "brew upgrade --cask" "command -v brew"
+    update_tool "Homebrew Cleanup" "brew cleanup" "command -v brew"
+    
+    # Mac App Store (if mas is installed)
+    update_tool "Mac App Store" "mas upgrade" "command -v mas"
+}
+
+# Linux updates
+update_linux() {
+    if [[ "$OS" != "ubuntu" ]]; then
+        return 0
+    fi
+    
+    print_status "🐧 Linux Updates"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # APT packages
+    update_tool "APT Update" "sudo apt update" "command -v apt"
+    update_tool "APT Upgrade" "sudo apt upgrade -y" "command -v apt"
+    update_tool "APT Autoremove" "sudo apt autoremove -y" "command -v apt"
+    
+    # Snap packages
+    update_tool "Snap Packages" "sudo snap refresh" "command -v snap"
+}
+
+# Language-specific updates
+update_languages() {
+    print_status "🔧 Language Tools"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # Node.js (via NVM)
+    if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+        update_tool "Node.js LTS" "source ~/.nvm/nvm.sh && nvm install --lts --reinstall-packages-from=node" "test -s ~/.nvm/nvm.sh"
+    fi
+    
+    # Python (via UV)
+    update_tool "UV (Python)" "uv self update" "command -v uv"
+    
+    # Rust
+    update_tool "Rust" "rustup update" "command -v rustup"
+    
+    # Go
+    if command -v go &>/dev/null; then
+        # Note: Go modules update automatically, but we can update go itself
+        print_status "Go is installed (modules update automatically)"
+    fi
+    
+    # Ruby (via rbenv)
+    update_tool "rbenv" "cd ~/.rbenv && git pull" "test -d ~/.rbenv/.git"
+}
+
+# Development tools
+update_dev_tools() {
+    print_status "🛠️ Development Tools"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # Global npm packages
+    if command -v npm &>/dev/null; then
+        update_tool "Global NPM packages" "npm update -g" "command -v npm"
+    fi
+    
+    # Global pip packages (via uv)
+    update_tool "Global Python packages" "uv tool upgrade --all" "command -v uv"
+    
+    # Cargo packages
+    update_tool "Cargo packages" "cargo install-update -a" "command -v cargo-install-update"
+    
+    # Oh My Zsh (if installed)
+    if [[ -d "$HOME/.oh-my-zsh" ]]; then
+        update_tool "Oh My Zsh" "cd ~/.oh-my-zsh && git pull" "test -d ~/.oh-my-zsh/.git"
+    fi
+    
+    # Vim/Neovim plugins (basic check)
+    if [[ -d "$HOME/.config/nvim" ]]; then
+        print_status "Neovim plugins (update manually with :PackerSync or :Lazy sync)"
+    fi
+}
+
+# System utilities
+update_utilities() {
+    print_status "⚙️ System Utilities" 
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # Topgrade (universal updater)
+    update_tool "Topgrade (universal updater)" "topgrade --yes" "command -v topgrade"
+    
+    # Docker (cleanup)
+    update_tool "Docker Cleanup" "docker system prune -f" "command -v docker"
+    
+    # Clean system caches
+    if [[ "$OS" == "macos" ]]; then
+        update_tool "macOS Caches" "sudo periodic daily weekly monthly" ""
+    fi
+}
+
+# Dotfiles update
+update_dotfiles() {
+    print_status "📂 Dotfiles"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    if [[ -d "$HOME/.dotfiles/.git" ]]; then
+        update_tool "Dotfiles Repository" "cd ~/.dotfiles && git pull --rebase" "test -d ~/.dotfiles/.git"
+    else
+        print_warning "Dotfiles not a git repository, skipping"
+    fi
+}
+
+# Health check after updates
+post_update_check() {
+    print_status "🏥 Post-update Health Check"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    # Run quick health check
+    if [[ -x "$SCRIPT_DIR/health-check" ]]; then
+        "$SCRIPT_DIR/health-check" quick
+    else
+        print_warning "Health check script not found"
+    fi
+}
+
+# Summary report
+show_summary() {
+    echo
+    print_status "📊 Update Summary"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    if [[ ${#UPDATED_TOOLS[@]} -gt 0 ]]; then
+        print_success "Successfully updated ${#UPDATED_TOOLS[@]} tool(s):"
+        for tool in "${UPDATED_TOOLS[@]}"; do
+            echo "  ✅ $tool"
+        done
+    fi
+    
+    if [[ ${#ERRORS[@]} -gt 0 ]]; then
+        echo
+        print_error "Failed to update ${#ERRORS[@]} tool(s):"
+        for error in "${ERRORS[@]}"; do
+            echo "  ❌ $error"
+        done
+        echo
+        print_status "💡 Tips:"
+        echo "  • Run with --verbose flag for more details"
+        echo "  • Check individual tool documentation for manual updates"
+        echo "  • Some tools may require manual intervention"
+    fi
+    
+    echo
+    if [[ ${#ERRORS[@]} -eq 0 ]]; then
+        print_success "🎉 All updates completed successfully!"
+    else
+        print_warning "⚠️ Some updates failed. Check the errors above."
+    fi
+    
+    print_status "🔄 Consider running: health-check"
+    echo "💡 Next: Restart your shell or run 'exec zsh' to reload configurations"
+}
+
+# Main update function
+run_updates() {
+    local categories=("$@")
+    
+    print_status "🚀 Starting system-wide updates..."
+    print_status "Timestamp: $(date)"
+    echo
+    
+    # Detect OS if not already set
+    if [[ -z "${OS:-}" ]]; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            OS="macos"
+        elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            if [[ -f /etc/os-release ]]; then
+                . /etc/os-release
+                case "$ID" in
+                    ubuntu|debian) OS="ubuntu" ;;
+                    *) OS="linux" ;;
+                esac
+            fi
+        fi
+    fi
+    
+    print_status "Detected OS: $OS"
+    echo
+    
+    # Run update categories
+    if [[ ${#categories[@]} -eq 0 ]]; then
+        # Default: run all updates
+        categories=("system" "languages" "dev-tools" "utilities" "dotfiles" "health-check")
+    fi
+    
+    for category in "${categories[@]}"; do
+        case "$category" in
+            "system")
+                update_macos
+                update_linux
+                ;;
+            "languages")
+                update_languages
+                ;;
+            "dev-tools")
+                update_dev_tools
+                ;;
+            "utilities")
+                update_utilities
+                ;;
+            "dotfiles")
+                update_dotfiles
+                ;;
+            "health-check")
+                post_update_check
+                ;;
+            *)
+                print_warning "Unknown category: $category"
+                ;;
+        esac
+    done
+    
+    show_summary
+}
+
+# Command line interface
+case "${1:-all}" in
+    "all")
+        run_updates
+        ;;
+    "system")
+        run_updates "system"
+        ;;
+    "languages")
+        run_updates "languages"
+        ;;
+    "dev-tools")
+        run_updates "dev-tools"
+        ;;
+    "utilities")
+        run_updates "utilities"
+        ;;
+    "dotfiles")
+        run_updates "dotfiles"
+        ;;
+    "health-check")
+        run_updates "health-check"
+        ;;
+    "--verbose"|"-v")
+        export VERBOSE=true
+        run_updates "${@:2}"
+        ;;
+    "help"|"--help"|"-h")
+        echo "Universal Update Tool"
+        echo ""
+        echo "Usage: update-all [category] [options]"
+        echo ""
+        echo "Categories:"
+        echo "  all         Update everything (default)"
+        echo "  system      System packages (Homebrew, APT, etc.)"
+        echo "  languages   Language tools (Node, Python, Rust, etc.)"
+        echo "  dev-tools   Development tools (npm, cargo, etc.)"
+        echo "  utilities   System utilities and cleanup"
+        echo "  dotfiles    Update dotfiles repository"
+        echo "  health-check Run post-update health check"
+        echo ""
+        echo "Options:"
+        echo "  --verbose, -v    Show detailed output"
+        echo "  --help, -h       Show this help"
+        echo ""
+        echo "Examples:"
+        echo "  update-all                  # Update everything"
+        echo "  update-all system          # Update only system packages"
+        echo "  update-all languages --verbose  # Update languages with details"
+        ;;
+    *)
+        print_error "Unknown command: $1"
+        print_status "Use 'update-all help' for usage information"
+        exit 1
+        ;;
+esac

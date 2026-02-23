@@ -1,0 +1,197 @@
+% vscode, raccourcis, navigation, fichiers
+# Ouvrir la palette de commandes
+CMD + SHIFT + P
+
+# Ouvrir un fichier rapidement
+CMD + P
+
+# Ouvrir un nouveau fichier
+CMD + N
+
+# Fermer le fichier actuel
+CMD + W
+
+# Fermer tous les fichiers
+CMD + K, CMD + W
+
+# Rouvrir le dernier fichier fermé
+CMD + SHIFT + T
+
+# Basculer entre les fichiers ouverts
+CMD + TAB
+
+# Aller au fichier suivant
+CMD + ALT + →
+
+# Aller au fichier précédent
+CMD + ALT + ←
+
+% vscode, raccourcis, édition, code
+# Copier la ligne actuelle
+CMD + C (sans sélection)
+
+# Couper la ligne actuelle
+CMD + X (sans sélection)
+
+# Dupliquer la ligne
+SHIFT + ALT + ↓
+
+# Déplacer la ligne vers le haut
+ALT + ↑
+
+# Déplacer la ligne vers le bas
+ALT + ↓
+
+# Supprimer la ligne
+CMD + SHIFT + K
+
+# Insérer une ligne en dessous
+CMD + Entrée
+
+# Insérer une ligne au dessus
+CMD + SHIFT + Entrée
+
+# Commenter/décommenter
+CMD + /
+
+# Commenter en bloc
+SHIFT + ALT + A
+
+% vscode, raccourcis, sélection, multicurseur
+# Sélectionner l'occurrence suivante
+CMD + D
+
+# Sélectionner toutes les occurrences
+CMD + SHIFT + L
+
+# Ajouter un curseur au dessus
+CMD + ALT + ↑
+
+# Ajouter un curseur en dessous
+CMD + ALT + ↓
+
+# Ajouter un curseur à la position du clic
+ALT + Clic
+
+# Sélectionner la colonne
+SHIFT + ALT + Glisser
+
+# Étendre la sélection
+SHIFT + CMD + →/←
+
+% vscode, raccourcis, recherche, remplacement
+# Rechercher
+CMD + F
+
+# Rechercher et remplacer
+CMD + ALT + F
+
+# Rechercher dans tous les fichiers
+CMD + SHIFT + F
+
+# Aller à la ligne
+CTRL + G
+
+# Aller au symbole dans le fichier
+CMD + SHIFT + O
+
+# Aller au symbole dans l'espace de travail
+CMD + T
+
+% vscode, raccourcis, interface, panneaux
+# Afficher/masquer l'explorateur
+CMD + SHIFT + E
+
+# Afficher/masquer la recherche
+CMD + SHIFT + F
+
+# Afficher/masquer le contrôle de source
+CMD + SHIFT + G
+
+# Afficher/masquer les extensions
+CMD + SHIFT + X
+
+# Afficher/masquer le terminal
+CMD + `
+
+# Nouveau terminal
+CMD + SHIFT + `
+
+# Basculer la barre latérale
+CMD + B
+
+# Zen Mode
+CMD + K, Z
+
+% vscode, raccourcis, débogage, git
+# Démarrer le débogage
+F5
+
+# Exécuter sans débogage
+CMD + F5
+
+# Basculer point d'arrêt
+F9
+
+# Aller à la définition
+F12
+
+# Aller à la définition dans un nouvel onglet
+CMD + K, F12
+
+# Voir les références
+SHIFT + F12
+
+# Renommer le symbole
+F2
+
+# Formater le document
+SHIFT + ALT + F
+
+# Formater la sélection
+CMD + K, CMD + F
+
+% vscode, raccourcis, terminal, intégré
+# Ouvrir le terminal
+CMD + `
+
+# Créer un nouveau terminal
+CMD + SHIFT + `
+
+# Basculer entre les terminaux
+CMD + ↑/↓ (dans le terminal)
+
+# Tuer le terminal actuel
+CMD + W (dans le terminal)
+
+# Effacer le terminal
+CMD + K (dans le terminal)
+
+% vscode, raccourcis, markdown, prévisualisation
+# Prévisualiser Markdown
+CMD + SHIFT + V
+
+# Ouvrir la prévisualisation sur le côté
+CMD + K, V
+
+# Synchroniser la prévisualisation avec l'éditeur
+CMD + SHIFT + V puis SPACE
+
+% vscode, raccourcis, refactoring, code
+# Afficher les suggestions rapides
+CMD + .
+
+# Organiser les imports
+SHIFT + ALT + O
+
+# Aller à la prochaine erreur
+F8
+
+# Aller à l'erreur précédente
+SHIFT + F8
+
+# Afficher les erreurs et avertissements
+CMD + SHIFT + M
+
+# Afficher la documentation rapide
+CMD + K, CMD + I
