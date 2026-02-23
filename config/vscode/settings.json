@@ -1,0 +1,59 @@
+{
+  "editor.defaultFormatter": "vscode.typescript-language-features",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  "eslint.validate": ["typescript", "typescriptreact", "javascript", "javascriptreact"],
+
+  // 📝 Prettier
+  // "prettier.enableDebugLogs": false,
+  // "prettier.requireConfig": true,
+
+  // 📂 Path Intellisense
+  "path-intellisense.extensionOnImport": true,
+  "path-intellisense.mappings": {
+    "@": "${workspaceFolder}/src"
+  },
+
+  // 📦 npm Intellisense
+  "npm-intellisense.scanDevDependencies": true,
+  "npm-intellisense.importES6": true,
+
+  // 🔍 Import Cost
+  "importCost.typescriptExtensions": [
+    "\\.tsx?$"
+  ],
+
+  // 🧪 REST Client
+  "rest-client.previewOption": "full",
+  "rest-client.environmentVariables": {
+    "$shared": {
+      "apiBase": "http://localhost:3000"
+    }
+  },
+
+  // 🖊 Code Spell Checker
+  "cSpell.enabled": true,
+  "cSpell.language": "en,fr",
+  "cSpell.allowCompoundWords": true,
+  "cSpell.words": [
+    "eslint",
+    "prettier",
+    "tsconfig",
+    "nodejs",
+    "husky",
+    "lintstaged"
+  ],
+  "cSpell.autoFormatConfigFile": true,
+  "cSpell.files": ["/src/**/*"],
+
+  // 🛠 Misc utiles
+  "files.autoSave": "onFocusChange",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
