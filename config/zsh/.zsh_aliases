@@ -66,6 +66,25 @@ alias gl='git log --oneline --graph --decorate'
 alias gcm='git checkout main'
 alias gcd='git checkout develop'
 
+# Fix git commit emails in history
+# Usage: git-fix-email "ancien@email.com" "nouveau@email.com"
+git-fix-email() {
+  local old_email="$1"
+  local new_email="$2"
+  if [[ -z "$old_email" || -z "$new_email" ]]; then
+    echo "Usage: git-fix-email <ancien-email> <nouvel-email>"
+    return 1
+  fi
+  FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f --env-filter "
+    if [ \"\$GIT_AUTHOR_EMAIL\" = \"$old_email\" ]; then
+      export GIT_AUTHOR_EMAIL=\"$new_email\"
+    fi
+    if [ \"\$GIT_COMMITTER_EMAIL\" = \"$old_email\" ]; then
+      export GIT_COMMITTER_EMAIL=\"$new_email\"
+    fi
+  " --tag-name-filter cat -- --all
+}
+
 # Vibecheck (AI commit messages via Ollama)
 alias vc='vibecheck commit --provider ollama --prompt "use conventional commits format (commitlint): type(scope): description, lowercase, no period"'
 
