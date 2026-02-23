@@ -235,6 +235,17 @@ create_symlinks() {
     mkdir -p "$HOME/.config"
     link_file "$PWD/config/starship/starship.toml" "$HOME/.config/starship.toml"
     [[ -d "config/nvim" ]] && link_file "$PWD/config/nvim" "$HOME/.config/nvim"
+
+    # VS Code configuration
+    if [[ -d "config/vscode" ]]; then
+        if [[ "$OS" == "macos" ]]; then
+            mkdir -p "$HOME/Library/Application Support/Code/User"
+            link_file "$PWD/config/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+        else
+            mkdir -p "$HOME/.config/Code/User"
+            link_file "$PWD/config/vscode/settings.json" "$HOME/.config/Code/User/settings.json"
+        fi
+    fi
     
     # Ghostty configuration
     if [[ -d "config/ghostty" ]]; then
