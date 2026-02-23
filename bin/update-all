@@ -94,8 +94,9 @@ update_languages() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     
     # Node.js (via NVM)
-    if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
-        update_tool "Node.js LTS" "source ~/.nvm/nvm.sh && nvm install --lts --reinstall-packages-from=node" "test -s ~/.nvm/nvm.sh"
+    local nvm_dir="${NVM_DIR:-$HOME/.config/nvm}"
+    if [[ -s "$nvm_dir/nvm.sh" ]]; then
+        update_tool "Node.js LTS" "source '$nvm_dir/nvm.sh' && nvm install --lts --reinstall-packages-from=node" "test -s '$nvm_dir/nvm.sh'"
     fi
     
     # Python (via UV)
