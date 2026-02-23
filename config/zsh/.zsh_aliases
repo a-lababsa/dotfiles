@@ -66,6 +66,9 @@ alias gl='git log --oneline --graph --decorate'
 alias gcm='git checkout main'
 alias gcd='git checkout develop'
 
+# Vibecheck (AI commit messages via Ollama)
+alias vc='vibecheck commit --provider ollama --prompt "use conventional commits format (commitlint): type(scope): description, lowercase, no period"'
+
 # Docker
 alias dps='docker ps'
 alias dimg='docker images'

@@ -29,6 +29,7 @@ brew "tldr"
 brew "tmux"
 brew "topgrade"
 brew "tree"
+brew "vibecheck"            # AI commit message generator
 brew "vim"
 brew "wget"
 brew "zoxide"              # Smart cd replacement
