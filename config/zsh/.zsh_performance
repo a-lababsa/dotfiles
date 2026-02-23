@@ -133,6 +133,9 @@ export HISTSIZE=50000
 export SAVEHIST=50000
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
+# Ensure history directory exists
+[[ ! -d "${HISTFILE:h}" ]] && mkdir -p "${HISTFILE:h}"
+
 # Enable sharing history between sessions but reduce disk writes
 setopt SHARE_HISTORY
 setopt HIST_FCNTL_LOCK
