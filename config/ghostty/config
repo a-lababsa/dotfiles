@@ -57,7 +57,7 @@ background-opacity = 0.95
 background-blur-radius = 20
 
 # Window settings  
-working-directory = /Users/alex/workspace
+working-directory = /Users/alexandre/workspace
 window-padding-x = 8
 window-padding-y = 8
 window-theme = dark

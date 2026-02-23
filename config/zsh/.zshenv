@@ -31,8 +31,8 @@ export LESSHISTFILE="$XDG_CACHE_HOME/less/history"
 # Pager configuration
 export PAGER="less"
 
-# NVM directory (will be set during installation)
-export NVM_DIR="$HOME/.nvm"
+# NVM directory (XDG-compliant)
+export NVM_DIR="$HOME/.config/nvm"
 
 # Python configuration
 export PYTHONPATH="$HOME/.local/lib/python3/site-packages:$PYTHONPATH"
@@ -47,4 +47,4 @@ export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 export PATH="$CARGO_HOME/bin:$PATH"
 
 # dotfiles location
-export DOTFILES="$HOME/.dotfiles"
+export DOTFILES="$HOME/Documents/dotfiles"

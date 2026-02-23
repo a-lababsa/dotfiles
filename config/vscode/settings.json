@@ -55,5 +55,11 @@
   "files.insertFinalNewline": true,
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
+  "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
+  "claudeCode.preferredLocation": "panel"
 }
