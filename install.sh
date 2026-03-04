@@ -287,6 +287,33 @@ create_symlinks() {
     fi
 }
 
+# Install VS Code extensions for Islands Dark theme
+install_vscode_extensions() {
+    if ! command_exists code; then
+        print_warning "VS Code CLI (code) not found — skipping extension install"
+        return
+    fi
+
+    print_status "Installing VS Code extensions for Islands Dark theme..."
+
+    # Custom UI Style (required by Islands Dark for CSS injection)
+    run_cmd "code --install-extension subframe7536.custom-ui-style"
+
+    # Islands Dark theme — install from local clone to get the latest version
+    local islands_dir="$HOME/.local/share/vscode-dark-islands"
+    if [[ ! -d "$islands_dir" ]]; then
+        run_cmd "git clone --depth=1 https://github.com/bwya77/vscode-dark-islands.git '$islands_dir'"
+    else
+        run_cmd "git -C '$islands_dir' pull --ff-only"
+    fi
+
+    if [[ -d "$islands_dir" ]]; then
+        run_cmd "code --install-extension '$islands_dir'"
+    fi
+
+    print_status "VS Code extensions installed."
+}
+
 # Main function
 main() {
     print_status "🚀 Installing dotfiles..."
@@ -306,6 +333,7 @@ main() {
     fi
     
     create_symlinks
+    install_vscode_extensions
 
     # Execute OS-specific script if it exists
     [[ -f "scripts/$OS.sh" ]] && run_cmd "bash scripts/$OS.sh"
